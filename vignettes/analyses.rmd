@@ -1,0 +1,73 @@
+```{r}
+erf = function(x) 2 * pnorm(x * sqrt(2)) - 1
+
+evi_an =
+  function(m = c(0, 0), theta) {
+    m = m[1] - m[2]
+    ans = 
+      theta * sqrt(2 / pi) * exp((-m^2) / (2 * theta^2)) +
+      m * erf(m / (theta * sqrt(2))) -
+      abs(m)
+    ans / 2
+  }
+
+evpi_an =
+  function(m = c(0, 0), s = c(1, 1)) {
+    theta = sqrt(sum(s^2))
+    evi_an(m, theta)
+  }
+
+evsi_an =
+  function(n = c(1e7, 1e7), m = c(0, 0), s = c(1, 1)) {
+    s2    = s^2
+    ns2   = n * s2
+    theta = sqrt(
+      s2[1] * (ns2[1] / (ns2[1] + 1)) + s2[2] * (ns2[2] / (ns2[2] + 1))
+    )
+    evi_an(m, theta)
+  }
+```
+
+```{r}
+evpi_sim =
+  function(n_sims = 1e6, m = c(0, 0), s = c(1, 1)) {
+    x  = rnorm(n_sims, m[1], s[1])
+    y  = rnorm(n_sims, m[2], s[2])
+    xy = cbind(x, y)
+    evwoi = max(apply(xy, 2, mean))
+    evwpi = mean(apply(xy, 1, max))
+    evwpi - evwoi
+  }
+```
+
+```{r}
+posterior =
+  function(x, m, s, p, nps) {
+    rnorm(n    = nps,
+          mean = (m + x * s * s * p) / (s * s * p + 1),
+          sd   = sqrt((s * s) / (s * s * p + 1)))
+  }
+
+preposterior =
+  function(m, s, p, npd, nps) {
+    x = rnorm(npd, m, s)
+    x = lapply(x, posterior, m = m, s = s, p = p, nps = nps)
+    do.call(cbind, x)
+  }
+
+preposterior_mult =
+  function(m, s, p, npd, nps) {
+    x = mapply(preposterior, m, s, p,
+               MoreArgs = list(npd = npd, nps = nps),
+               SIMPLIFY = TRUE, USE.NAMES = FALSE)
+    array(x, dim = c(j = nps, k = npd, d = length(m)))
+  }
+
+evsi_sim =
+  function(n = c(1e7, 1e7), m = c(0, 0), s = c(1, 1), npd = 10000, nps = 10000) {
+    ans = preposterior_mult(m, s, n, npd, nps)
+    ans = apply(ans, 2:3, mean)
+    mean(apply(ans, 2, max)) - max(apply(ans, 2, mean))
+  }
+```
+
