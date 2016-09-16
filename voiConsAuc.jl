@@ -19,8 +19,8 @@ function evsi_sim(μ = [0, 0], σ = [1, 1], nsamples = [10000, 10000]; nsims = 1
     for dist in 1:ndists
 
         true_values[:, dist] = rand(Normal(μ[dist], σ[dist]), nsims)
-        prior_weight[dist]   = (1 / σ[dist]^2) / (nsamples[dist] + 1)
-        sample_weight[dist]  = nsamples[dist] / (nsamples[dist] + 1)
+        prior_weight[dist]   = (1 / σ[dist]) / (nsamples[dist] + (1 / σ[dist]))
+        sample_weight[dist]  = nsamples[dist] / (nsamples[dist] + (1 / σ[dist]))
         sample_sd[dist]      = sqrt(1 / nsamples[dist])
     
     end
@@ -32,8 +32,12 @@ function evsi_sim(μ = [0, 0], σ = [1, 1], nsamples = [10000, 10000]; nsims = 1
         posterior_mean = Array(Float64, ndists)
         
         for dist in 1:ndists
-            posterior_mean[dist] = μ[dist] * prior_weight[dist] +
-              rand(Normal(true_values[sim, dist], sample_sd[dist])) * sample_weight[dist]
+            posterior_mean[dist] = μ[dist] * prior_weight[dist]
+            if nsamples[dist] > 0 
+                posterior_mean[dist] +=
+                    rand(Normal(true_values[sim, dist], sample_sd[dist])) *
+                        sample_weight[dist]
+            end
         end
         
         benefit[sim] = true_values[sim, indmax(posterior_mean)]

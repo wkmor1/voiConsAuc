@@ -2,7 +2,7 @@
 erf = function(x) 2 * pnorm(x * sqrt(2)) - 1
 
 evi_an =
-  function(m = c(0, 0), theta) {
+  function(m, theta) {
     m = m[1] - m[2]
     ans = 
       theta * sqrt(2 / pi) * exp((-m^2) / (2 * theta^2)) +
@@ -18,7 +18,7 @@ evpi_an =
   }
 
 evsi_an =
-  function(n = c(1e7, 1e7), m = c(0, 0), s = c(1, 1)) {
+  function(n = c(.5, .5), m = c(0, 0), s = c(1, .1)) {
     s2    = s^2
     ns2   = n * s2
     theta = sqrt(
@@ -29,45 +29,71 @@ evsi_an =
 ```
 
 ```{r}
-evpi_sim =
-  function(n_sims = 1e6, m = c(0, 0), s = c(1, 1)) {
-    x  = rnorm(n_sims, m[1], s[1])
-    y  = rnorm(n_sims, m[2], s[2])
-    xy = cbind(x, y)
-    evwoi = max(apply(xy, 2, mean))
-    evwpi = mean(apply(xy, 1, max))
-    evwpi - evwoi
-  }
+evsi_sim = 
+  function(m = c(0, 0), s = c(1, .1), nsamples = c(.5, .5), nsims = 10000) {
+
+    ndists        = length(m)
+    true_values   = matrix(nrow = nsims, ncol = ndists)
+    prior_weight  = vector("numeric", ndists)
+    sample_weight = vector("numeric", ndists) 
+    sample_sd     = vector("numeric", ndists)
+
+    for (dist in 1:ndists) {
+
+        true_values[, dist]  = rnorm(nsims, m[dist], s[dist])
+        prior_weight[dist]   = (1 / s[dist]) / (nsamples[dist] + (1 / s[dist]))
+        sample_weight[dist]  = nsamples[dist] / (nsamples[dist] + (1 / s[dist]))
+        sample_sd[dist]      = sqrt(1 / nsamples[dist])
+
+    }
+
+    benefit = vector("numeric", nsims)
+
+    for (sim in 1:nsims) {
+
+        posterior_mean = vector("numeric", ndists)
+
+        for (dist in 1:ndists) {
+            posterior_mean[dist] = m[dist] * prior_weight[dist]
+            if (nsamples[dist]) {
+                posterior_mean[dist] = posterior_mean[dist] +
+                    rnorm(1, true_values[sim, dist], sample_sd[dist]) * sample_weight[dist]
+            }
+        }
+
+        benefit[sim] = true_values[sim, which.max(posterior_mean)]
+
+    }
+
+   mean(benefit) - max(m)
+
+}
+
+evsi_sim = compiler::cmpfun(evsi_sim)
 ```
 
 ```{r}
-posterior =
-  function(x, m, s, p, nps) {
-    rnorm(n    = nps,
-          mean = (m + x * s * s * p) / (s * s * p + 1),
-          sd   = sqrt((s * s) / (s * s * p + 1)))
-  }
-
-preposterior =
-  function(m, s, p, npd, nps) {
-    x = rnorm(npd, m, s)
-    x = lapply(x, posterior, m = m, s = s, p = p, nps = nps)
-    do.call(cbind, x)
-  }
-
-preposterior_mult =
-  function(m, s, p, npd, nps) {
-    x = mapply(preposterior, m, s, p,
-               MoreArgs = list(npd = npd, nps = nps),
-               SIMPLIFY = TRUE, USE.NAMES = FALSE)
-    array(x, dim = c(j = nps, k = npd, d = length(m)))
-  }
-
-evsi_sim =
-  function(n = c(1e7, 1e7), m = c(0, 0), s = c(1, 1), npd = 10000, nps = 10000) {
-    ans = preposterior_mult(m, s, n, npd, nps)
-    ans = apply(ans, 2:3, mean)
-    mean(apply(ans, 2, max)) - max(apply(ans, 2, mean))
-  }
+library(manipulate)
+manipulate({
+    n = rep(exp(seq(log(1), log(nmax), length.out = 101)), each = 101)
+    p = rep(100:0 / 100, 101)
+    ev = map2_dbl(n, p, ~evsi_an(c(.x * .y, .x * (1 - .y)), c(m1, m2), c(s1, s2)))
+    ev = matrix(ev, 101)
+    opt = t(t(ev) / apply(ev, 2, max))
+    ev = raster(ev)
+    opt = raster(opt)
+    par(mfrow = 1:2)
+    plot(ev, asp = NA, las = 1, xaxt = 'n')
+    contour(ev, add = TRUE)
+    axis(1, at = 0:5 / 5, label = round(exp(seq(log(1), log(nmax), length.out = 6))))
+    plot(opt, asp = NA, las = 1, xaxt = 'n', yaxt = 'n')
+    contour(opt, add = TRUE)
+    axis(1, at = 0:5 / 5, label = round(exp(seq(log(1), log(nmax), length.out = 6))))
+  },
+  m1 = slider(-5.0, 5.0, 0.0, NULL, .1),
+  m2 = slider(-5.0, 5.0, 0.0, NULL, .1),
+  s1 = slider(0.01, 5.0, 1, NULL, .01),
+  s2 = slider(0.01, 5.0, 1, NULL, .01),
+  nmax = slider(10, 5000, 500, NULL, 10)
+)
 ```
-
