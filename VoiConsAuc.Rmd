@@ -1,0 +1,201 @@
+---
+title: "The value of information for conservation auctions"
+author: "William K Morris"
+documentclass: article
+output: bookdown::html_document2
+---
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(
+  cache = TRUE, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"
+)
+```
+
+<!----------------------------------PLAN----------------------------------------
+
+{} Abstract
+
+{} Introduction
+
+   -- Conservation Auctions
+      ** Some background stuff on conservation auctions and PES schemes
+      ** Examples like Bush Returns, Bush Tender, CRP, European examples etc
+   
+   -- Rank by cost-benefit
+      ** The typical way of deciding on the outcome of bidding
+      ** It's not necessarily optimal 
+      
+   -- Conservation auctions and uncertainty
+      ** Uncertainty in benefits 
+      ** Uncertainty in costs
+      ** Uncertainty is often ignored by agencies
+      ** Contrast with the game-theoritic and economic literature
+
+{}  Analysis 
+   
+   -- Analytical context
+      ** Set up the model 
+   
+   -- Our Approach
+      ** Optimal Solution for two asset
+      ** Simulation of  two asset 
+      ** Simulation of three or more asset
+      ** Heuristic for two asset
+      ** Heuristic for three asset
+      ** How is it similar/different to other approaches, game-theoritic, 
+         multi-armed bandit, bayesian experimental design
+         
+{} Discussion
+
+      ** Heuristics/rules of thumb from that can be applied to real world
+      ** Comparison of naive to optimal
+      ** Rules of thumb
+         *** Learn first at the margin
+         *** Learn about the most uncertain
+         *** Learn last about the rest until the budget is exhausted
+      
+{} Conclusions
+
+{} 4 graphics
+
+   -- Figure 1 Optimal solution for 2 assets
+   -- Figure 2 Simulated solution for 3 assets
+   -- Figure 3 Heuristic solution for 3 assets
+   -- Figure 4 Comparison of the heuristic solution and optimal for two assets
+
+------------------------------------------------------------------------------->
+
+# Abstract {-}
+Conservation auctions can been used to meet the objectives of natural resource managers and are designed to cost-effectively protect biodiversity and ecosystem services. In running an auction, an agency seeks to minimize the cost it pays to get the maximum benefit from the assets included in the auction. When the auction is completed, cost (the total cost of the winning bids) tends to be known with certainty. Often however, benefits are more uncertain (e.g., when the benefits are to be realized in the future, such as in the case of vegetation regeneration). Therefore there is an imperative on the part of the auction-running agency to spend resources on learning about benefits in order to make a decisions about which bids will be successful and which bids will be unsuccessful. Here we use the concept of expected value of sample information to assess how such an agency should allocate a limited learning budget among bids/assets in order to conduct a future conservation auction that yields the most cost-effective return on investment. We propose a simple model system where an agent has two or more assets among which they must pick the most cost-effective to invest in, in a forthcoming auction. The cost-effectiveness of each asset is more or less uncertain and there is some budget allocated to reduce the uncertainty of each asset. The agent must decide how to allocate the learning budget among the assets in order to maximize the expected benefit of the auction. We propose an analytical solution to the problem when there are two assets and the uncertainty in cost-effectiveness is normally distributed. When there are more the two assets in the auction pool, then the analytical solution does not apply. Instead, we propose a heuristic solution to the problem based on optimally ranking the assets in order of cost-effectiveness (rather than knowing explicitly, the exact value that determines the ranks). We then compare results of the heuristic solution to a Monte Carlo simulation of the problem to demonstrate that it arrives at the same optimal allocation of learning resources. In applying our model to case-studies with different numbers of assets and with different prior knowledge of the assets cost-effectiveness, we glean a number of rules-of-thumb that may be helpful to agencies conducting conservation auctions. When learning budgets are small then the most optimal strategy is to learn new information about the most marginal assets, that is, the assets about which the probability of being the most cost-effective is the most uncertain. Then, as the budget increases it becomes more optimal to learn about assets which have uncertain cost-effectiveness in the more general sense. Finally, as learning budgets become large enough as to not be limiting, resources can be allocated evenly across all uncertain assets. The model we propose and the analytical, heuristic and simulation solutions we apply to its case studies imply that naive even allocation (or no allocation at all) to learning among assets in a conservation auction may lead to less than cost-effective outcomes for the agencies that use them.
+
+# Introduction {-}
+Conservation auctions have become a widespread and established market mechanism aimed at achieving public environmental goods by contracting with landholders and managers with maximum cost-effectiveness. Conservation auctions include payment for ecosystem services (PES) schemes, environmental stewardship and conservation easement programs. Some recent examples include the US Water Quality Incentives Program, the Conestoga watershed reverse auctions of Pennsylvania, the English Countryside Stewardship Scheme, the German MEKA project and the Bush Returns and Bush Tender programs in Victoria, Australia.
+
+Conservation auctions typically take the form of a reverse auction. In a reverse auction, the agency conducting the auction, typically some branch of a government, is the buyer. The bidders are the landholders or managers who compete for the pool of funding available by offering to sell some prespecified environmental good desired by auction-conducting agency. The environmental good may take the form of land title or a contract to conduct a particular management action. In some cases the outcome of management is the good specified in contract and the management action is left up to the managers. Unlike a standard auction where the buyers are competing and price is maximized, reverse auctions are aimed at reducing the price of the goods being purchased, as it is the sellers how are in competition with one another. In facilitating the competition for a single pool of funding the auction conducting agent seeks to maximize the environmental benefit it can get for the lowest cost and thus maximize the cost-effectiveness of the environmental scheme.
+
+## Ranking auction bids by cost-benefit ratio {-}
+In a typical reverse auction aimed at getting some public environmental good, the conducting agency will assess the bids by their cost-benefit ratio. The bids will be ranked from highest to lowest in terms of cost efficiency. The winning bids will be the most cost-efficient up to some cutoff. The cutoff may be the cumulative total cost of the most cost efficient bids according to a fixed budget, or it could be a prespecified level of cost-efficiency. Time-limited reverse auctions will often use the budget exhaustion method whereas longer-term schemes with repeated rounds will often use a cost-efficiency based cutoff. The
+rank-by-cost-efficient strategy is usually near optimal though in some circumstances it can produce no optimal results and more sophisticated portfolio methods can be used to maximise the total benefit of a reverse. However more often than not the more complex methods yield similar results to a simple ranking and budget exhaustion strategy.
+
+## Conservation auctions and uncertainty {-}
+There are multiple sources of uncertainty in a conservation auction that can affect the outcome in a number of ways. Moreover there a multiple perspectives from which to view uncertainty within the framework of a conservation, and different actors may have different uncertainties about different aspects of the auction from one another. Here we focus only one aspect of uncertainty, uncertainty about the cost-efficiency of bids and only from the perspective of the agency conducting the auction. Other important facets of uncertainty in reverse-auctions are the knowledge bidders have of one another's circumstances and that of the circumstances of the seller. There is a vast game-therotic literature dealing with these types of uncertainty in auctions but we dont deal with any further here.
+
+After bids are submitted in an auction the cost will have no uncertainty. So in most conservation auctions the bulk of the uncertainty about cost-efficiency is due to uncertainty about benefits. Conservation benefit of the kind sought after in a reverse auction is inherently uncertain as it is often only realised at some point far in future long after the auction scheme is implemented. Land regeneration, water or soil quality improvement or other ecosystem services are some examples of the type of benefit that is payed for at one point in time when the payoff is not expected until much later on. 
+
+# Analysis {-}
+
+# Discussion {-}
+
+# Conclusions {-}
+
+
+```{r evsi2an}
+erf <- function(x) 2 * pnorm(x * sqrt(2)) - 1
+
+evi2an =
+  function(m, theta) {
+    ans = 
+      theta * sqrt(2 / pi) * exp((-m^2) / (2 * theta^2)) +
+      m * erf(m / (theta * sqrt(2))) -
+      abs(m)
+    ans / 2
+  }
+
+evpi2an =
+  function(m = 0, sigma = c(1, 1)) {
+    theta = sqrt(sum(sigma^2))
+    evi2an(m, theta)
+  }
+
+evsi2an =
+  function(m = 0, sigma = c(1, 1), n = c(1, 1)) {
+    s     = sigma^2
+    ns    = n * s
+    theta = sqrt(
+      s[1] * (ns[1] / (ns[1] + 1)) + s[2] * (ns[2] / (ns[2] + 1))
+    )
+    evi2an(m, theta)
+  }
+```
+
+```{r evsi2heu}
+evsi2heu <- 
+  function(m = 0, sigma = c(1, 1), n = c(1, 1)) {
+    tau = 1  / (sigma^2)
+    p <- pnorm(m / (sqrt(2) * ((tau[1]^-.5) + (tau[2]^-.5))))
+    pp <- pnorm(m / (sqrt(2) * ((tau[1] + n[1])^-.5 + (tau[2] + n[2])^-.5)))
+    pmax(pp, 1 - pp) - pmax(p, 1 - p)
+  }
+```
+
+```{r evis2naive}
+evsi2naive <-
+  function(m = 0, sigma = c(1, 1), N = 1, f) {
+    sapply(
+      N, 
+      function(x) {
+        f(m, sigma, c(x / 2, x / 2))
+      }
+    )
+  }
+```
+
+```{r evsi2opt}
+evsi2opt <-
+  function(m = 0, sigma = c(1, 1), N = 1, f, type = c("p", "evsi")) {
+    sapply(
+      N, 
+      function(x) {
+        optimise(
+          function(p) f(m, sigma, c(x * p, x * (1 - p))), 0:1, maximum = TRUE
+        )[[switch(type, p = 1, evsi = 2)]]
+      }
+    )
+  }
+```
+
+(ref:evsi2anplot) _Analytical solution to optimal allocation of sampling of two assets. In this case two assets have prior distributions $\mathrm{N}(\mu = 1, \sigma = 1)$ and $\mathrm{N}(\mu = 0, \sigma = 1/5)$ respectively. The top panel indicates the optimal proportional allocation of sampling between the two assets (black line) as well as the naive allocation with even sampling between two assets (dashed line) . Here $p$ is the proportion allocated to the first asset and $N$ is the total number of samples (the budget). The middle panel shows the EVSI for the optimal and naive sampling strategies of the panel above. The dotted line is the EVPI (`r evpi2an(1, c(1, 1/5))`). is The bottom panel indicates the gain in EVSI of using the optimal strategy over the naive solution (the difference between the two curves in the middle panel)._
+
+```{r evsi2anplot, fig.cap = "(ref:evsi2anplot)"}
+local({
+  N      = seq(0, 50, 50 / 100)
+  m      = 1
+  sigma  = c(1, 1/5)
+  evpi   = evpi2an(m, sigma)
+  p      = evsi2opt(m, sigma, N, evsi2an, "p")
+  evsi   = evsi2opt(m, sigma, N, evsi2an, "evsi")
+  evsi_n = evsi2naive(m, sigma, N, evsi2an)
+  
+  par(mfrow = c(3, 1), oma = c(5, 4, 1, 1), mar = c(.5, .5, .5, .5),
+      xaxs = 'i', yaxs = 'i')
+ 
+  plot.new()
+  plot.window(xlim = range(N), ylim = 0:1, bg = "grey90")
+  rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], 
+       col = "grey90", border = NA)
+  abline(h = .5, lty = 2)
+  points(N, p, type = "l", xpd = NA)
+  mtext("p", 2, 3)
+  axis(2, las = 1)
+  
+  plot.new()
+  plot.window(xlim = range(N), ylim = c(0, evpi * 1.1), bg = "grey90")
+  rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], 
+       col = "grey90", border = NA)
+  abline(h = evpi, lty = 3)
+  points(N, evsi, type = "l", xpd = NA)
+  points(N, evsi_n, type = "l", lty = 2, xpd = NA)
+  mtext("EVSI", 2, 3)
+  axis(2, las = 1)
+  
+  plot.new()
+  plot.window(xlim = range(N), ylim = c(0, max(evsi - evsi_n) * 1.1),
+              bg = "grey90")
+  rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], 
+       col = "grey90", border = NA)
+  points(N, evsi - evsi_n, type = "l", xpd = NA)
+  mtext("EVSI gain", 2, 3)
+  axis(2, las = 1)
+  axis(1)
+  mtext("N", 1, 3, outer = TRUE)
+})
+```
