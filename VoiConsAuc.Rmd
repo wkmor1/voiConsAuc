@@ -10,6 +10,13 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r pkgs}
+library(mgcv)
+library(mvtnorm)
+library(parallel)
+library(raster)
+```
+
 <!----------------------------------PLAN----------------------------------------
 
 {} Abstract
@@ -62,8 +69,10 @@ knitr::opts_chunk$set(
 {} 4 graphics
 
    -- Figure 1 Optimal solution for 2 assets
-   -- Figure 2 Simulated solution for 3 assets
+   -- Figure 2 Simulated solution for 2 assets
    -- Figure 3 Heuristic solution for 3 assets
+   -- Figure 4 Simulated solution for 3 assets
+   
 ------------------------------------------------------------------------------->
 
 # Abstract {-}
@@ -109,7 +118,7 @@ Now we turn to the allocation of sampling for uncertainty reduction among the as
 When there are only two assets the EVSI (as shown by @Moore2017) is defined as,
 
 $$
-\mathrm{EVSI} = \frac{1}{2}\left(\Theta\sqrt{\frac{2}{\pi}}^{-\frac{\mu_1 - \mu_2}{2\Theta^2}} + (\mu_1 - \mu_2)\mathrm{erf}\left(\frac{\mu_1 - \mu_2}{\Theta\sqrt{2}}\right)\right) 
+\mathrm{EVSI} = \frac{1}{2}\left(\Theta\sqrt{\frac{2}{\pi}}^{-\frac{\mu_1 - \mu_2}{2\Theta^2}} + (\mu_1 - \mu_2)\,\mathrm{erf}\left(\frac{\mu_1 - \mu_2}{\Theta\sqrt{2}}\right)\right) 
 $$
 
 where, 
@@ -135,8 +144,8 @@ evi2an =
   function(m, theta) {
     ans = 
       theta * sqrt(2 / pi) * exp((-m^2) / (2 * theta^2)) +
-      m * erf(m / (theta * sqrt(2))) -
-      abs(m)
+        m * erf(m / (theta * sqrt(2))) -
+          abs(m)
     ans / 2
   }
 
@@ -150,9 +159,7 @@ evsi2an =
   function(m = 0, sigma = c(1, 1), n = c(1, 1)) {
     s     = sigma^2
     ns    = n * s
-    theta = sqrt(
-      s[1] * (ns[1] / (ns[1] + 1)) + s[2] * (ns[2] / (ns[2] + 1))
-    )
+    theta = sqrt(s[1] * (ns[1] / (ns[1] + 1)) + s[2] * (ns[2] / (ns[2] + 1)))
     evi2an(m, theta)
   }
 ```
@@ -161,8 +168,8 @@ evsi2an =
 evsi2heu <- 
   function(m = 0, sigma = c(1, 1), n = c(1, 1)) {
     tau = 1  / (sigma^2)
-    p <- pnorm(m / (sqrt(2) * ((tau[1]^-.5) + (tau[2]^-.5))))
-    pp <- pnorm(m / (sqrt(2) * ((tau[1] + n[1])^-.5 + (tau[2] + n[2])^-.5)))
+    p  = pnorm(m / (sqrt(2) * ((tau[1]^-.5) + (tau[2]^-.5))))
+    pp = pnorm(m / (sqrt(2) * ((tau[1] + n[1])^-.5 + (tau[2] + n[2])^-.5)))
     pmax(pp, 1 - pp) - pmax(p, 1 - p)
   }
 ```
@@ -205,7 +212,7 @@ local({
   evsi   = evsi2opt(m, sigma, N, evsi2an, "evsi")
   evsi_n = evsi2naive(m, sigma, N, evsi2an)
   
-  par(mfrow = c(3, 1), oma = c(5, 4, 1, 1), mar = c(.5, .5, .5, .5),
+  par(mfrow = c(3, 1), oma = c(5, 5, 1, 1), mar = c(.5, .5, .5, .5),
       xaxs = 'i', yaxs = 'i')
  
   plot.new()
@@ -214,7 +221,7 @@ local({
        col = "grey90", border = NA)
   abline(h = .5, lty = 2)
   points(N, p, type = "l", xpd = NA)
-  mtext("p", 2, 3)
+  mtext("p", 2, 4)
   axis(2, las = 1)
   
   plot.new()
@@ -224,7 +231,7 @@ local({
   abline(h = evpi, lty = 3)
   points(N, evsi, type = "l", xpd = NA)
   points(N, evsi_n, type = "l", lty = 2, xpd = NA)
-  mtext("EVSI", 2, 3)
+  mtext("EVSI", 2, 4)
   axis(2, las = 1)
   
   plot.new()
@@ -233,9 +240,166 @@ local({
   rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], 
        col = "grey90", border = NA)
   points(N, evsi - evsi_n, type = "l", xpd = NA)
-  mtext("EVSI gain", 2, 3)
+  mtext("EVSI gain", 2, 4)
   axis(2, las = 1)
   axis(1)
   mtext("N", 1, 3, outer = TRUE)
+})
+```
+
+```{r evsi2sim, eval = FALSE}
+system("julia evsi2sim.jl &")
+```
+
+```{r evsi2simplot}
+local({
+  sim = read.csv("evsi2sim.csv")
+  sim = as.matrix(sim)
+  r = raster(sim)
+  y = seq(0.99, 0.01, length.out = nrow(sim))[apply(sim, 2, which.max)]
+  x = seq(0.01, 0.99, length.out = ncol(sim))
+  plot.new()
+  plot.window(xlim = 0:1, ylim = 0:1, xaxs = 'i')
+  plot(r, xaxt = "n", las = 1, useRaster = FALSE, legend = FALSE, add = TRUE, col = grey.colors(256))
+  contour(r, add = TRUE)
+  abline(h = 1/2, lty = 2)
+  points(x, predict(gam(y~s(x))), type = "l", pch = 19, col = "black", lwd = 2)
+  axis(1, seq(0, 1, length.out = 6), seq(0, 50, length.out = 6))
+  axis(2, 0:5/5, las = 1)
+  mtext("N", 1, 3)
+  mtext("p", 2, 3)
+})
+```
+
+```{r calcjp}
+calc_jp = function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c) {
+  pr_ord = function(ord) {
+    
+    mu_ = unname(unlist(mget(paste('mu', ord, sep = '_'), inherits = TRUE)))
+    var_ = 1 / unname(unlist(mget(paste('tau', ord, sep = '_'), inherits = TRUE)))
+    
+    muz = c(mu_[2] - mu_[1], mu_[3] - mu_[2])
+    varz = c(var_[1] + var_[2], var_[2] + var_[3])
+    
+    pmvnorm(
+      c(-Inf, -Inf), 
+      c(0, 0), 
+      mean = muz, 
+      sigma = rbind(c(varz[1], -var_[2]), c(-var_[2], varz[2]))
+    )
+  }
+  
+  return(
+    c(pr_ord(c('a', 'b', 'c')), 
+      pr_ord(c('a', 'c', 'b')), 
+      pr_ord(c('b', 'a', 'c')), 
+      pr_ord(c('b', 'c', 'a')), 
+      pr_ord(c('c', 'a', 'b')), 
+      pr_ord(c('c', 'b', 'a'))
+    )
+  )
+}
+```
+
+```{r evpi3heu}
+evpi3heu = function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c, mp) {
+  
+  jps = calc_jp(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c)
+  
+  E_pri_uA = sum(jps * c(1, 1, mp, 0, mp, 0))
+  E_pri_uB = sum(jps * c(mp, 0, 1, 1, 0, mp))
+  E_pri_uC = sum(jps * c(0, mp, 0, mp, 1, 1))
+  
+  1 - pmax(E_pri_uA, E_pri_uB, E_pri_uC)
+  
+}
+```
+
+```{r evsi3heu}
+evsi3heu = function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c, sigma2, N, p, mp) {
+  upd_tau = function(sigma2, n, tau) {
+    tau + (n / sigma2) 
+  }
+  sapply(
+    N, 
+    function(N) {
+      jps = calc_jp(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c)
+       
+      E_pri_uA = sum(jps * c(1, 1, mp, 0, mp, 0))
+      E_pri_uB = sum(jps * c(mp, 0, 1, 1, 0, mp))
+      E_pri_uC = sum(jps * c(0, mp, 0, mp, 1, 1))
+       
+      tau_a = upd_tau(sigma2, N * p[1], tau_a)
+      tau_b = upd_tau(sigma2, N * p[2], tau_b)
+      tau_c = upd_tau(sigma2, N * (1 - p[1] - p[2]), tau_c)
+       
+      jps = calc_jp(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c)
+       
+      E_post_uA = sum(jps * c(1, 1, mp, 0, mp, 0))
+      E_post_uB = sum(jps * c(mp, 0, 1, 1, 0, mp))
+      E_post_uC = sum(jps * c(0, mp, 0, mp, 1, 1))
+       
+      pmax(E_post_uA, E_post_uB, E_post_uC) - pmax(E_pri_uA, E_pri_uB, E_pri_uC)
+     }
+  )  
+}
+```
+
+```{r evsi3opt}
+evsi3opt = 
+  function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c, sigma2, N, f, mp = 0.5) {
+    simplify2array(
+      mclapply(
+        N, 
+        function(N) {   
+          x = 
+            constrOptim(
+              c(1/3, 1/3),
+              function(p) {
+                f(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c, sigma2, N, p, mp)
+              }, 
+              NULL,
+              rbind(c(1, 0), c(0, 1), c(-1, -1)),
+              c(0, 0, -1),
+              control = list(fnscale = -1)        
+            )
+          return(c(x$value, x$par[1], x$par[2], 1 - x$par[1] - x$par[2]))
+        },
+        mc.cores = 20
+      )
+    )
+  }
+```
+
+```{r evsi2heuplot}
+local({
+  x = seq(0.0001, 10, length.out = 50)
+  y = evsi3opt(2, .5, 0, 1.25^-2, .8^-2, .75^-2, 1, x, evsi3heu, .5)
+  plot.new()
+  plot.window(xlim = c(0, 10), ylim = 0:1, xaxs = 'i')
+  box()
+  axis(1)
+  axis(2, 0:5/5, las = 1)
+  mtext("N", 1, 3)
+  mtext("p", 2, 3)
+  points(x, y[2,], type = "l", lty = 1)
+  points(x, y[3,], type = "l", lty = 2)
+  points(x, y[4,], type = "l", lty = 3)
+})
+```
+
+```{r evsi2sim, eval = FALSE}
+system("julia evsi3sim.jl &")
+```
+
+```{r evsi3simplot}
+local({
+  y = read.csv("evsi3sim.csv", header = FALSE)
+  y = as.matrix(y)[,-1:-3]
+  x = seq(.0001, 10, length.out = 50)[-1:-3]
+  plot(x, y[1, ], ylim = 0:1, type = "n", las = 1, xlab = "N", ylab = "p")
+  lines(smooth.spline(x, y[1,]),lty = 1)
+  lines(smooth.spline(x, y[2,]), lty = 2)
+  lines(smooth.spline(x, 1 - (y[1, ] + y[2, ])), lty = 3)
 })
 ```
