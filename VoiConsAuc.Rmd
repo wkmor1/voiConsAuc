@@ -76,7 +76,7 @@ library(raster)
 ------------------------------------------------------------------------------->
 
 # Abstract {-}
-Conservation auctions can been used to meet the objectives of natural resource managers and are designed to cost-effectively protect biodiversity and ecosystem services. In running an auction, an agency seeks to minimize the cost it pays to get the maximum benefit from the assets bought in the auction. When the auction is completed, cost (the total cost of the winning bids) tends to be known with certainty. Often however, benefits are more uncertain (e.g., when the benefits are to be realized in the future, such as in the case of vegetation regeneration). Therefore, there is an imperative on the part of the auction-running agency to spend resources on learning about benefits in order to make a decisions about which bids will be successful and which bids will be unsuccessful. Here we use the concept of expected value of sample information to assess how such an agency should allocate a limited learning budget among bids in order to conduct a conservation auction that yields the most cost-effective return on investment. We propose a simple model system where an agent has two or more assets among which they must pick the most cost-effective to invest in, for a forthcoming auction. The cost-effectiveness of each asset is more or less uncertain and there is some budget allocated to reduce the uncertainty of each asset. The agent must decide how to allocate the learning budget among the assets in order to maximize the expected benefit of the auction. We describe an analytical solution to the problem when there are two assets and the uncertainty in cost-effectiveness is normally distributed. When there are more the two assets in the auction pool, then the analytical solution does not apply. Instead, we propose a heuristic solution to the problem based on optimally ranking the assets in order of cost-effectiveness (rather than knowing explicitly, the exact value that determines the ranks). We then compare results of the heuristic solution to a Monte Carlo simulation of the problem to demonstrate that it arrives at the same optimal allocation of learning resources. In applying our model to case-studies with different numbers of assets and with different prior knowledge of the assets cost-effectiveness, we glean a number of rules-of-thumb that may be helpful to agencies conducting conservation auctions. When learning budgets are small then the most optimal strategy is to learn new information about the most marginal assets, that is, the assets about which the probability of being the most cost-effective is the most uncertain. Then, as the budget increases it becomes more optimal to learn about assets which have uncertain cost-effectiveness in the more general sense. Finally, as learning budgets become large enough as to not be limiting, resources can be allocated evenly across all uncertain assets. The model we propose and the analytical, heuristic and simulation solutions we apply to its case studies, imply that naive even allocation (or no allocation at all) to learning among assets in a conservation auction may lead to less than cost-effective outcomes for the agencies that use them.
+Conservation auctions can been used to meet the objectives of natural resource managers and are designed to cost-efficiently protect biodiversity and ecosystem services. In running an auction, an agency seeks to minimize the cost it pays to get the maximum benefit from the assets bought in the auction. When the auction is completed, cost (the total cost of the winning bids) tends to be known with certainty. Often however, benefits are more uncertain (e.g., when the benefits are to be realized in the future, such as in the case of vegetation regeneration). Therefore, there is an imperative on the part of the auction-running agency to spend resources on learning about benefits  to make a decision about which bids will be successful and which bids will be unsuccessful. Here we use the concept of expected value of sample information to assess how such an agency should allocate a limited learning budget among bids to conduct a conservation auction that yields the most cost-efficient return on investment. We propose a simple model system where an agent has two or more assets among which they must pick the most cost-efficient to invest in for a forthcoming auction. The cost-efficiency of each asset is more or less uncertain and there is some budget allocated to reduce the uncertainty of the assets. The agent must decide how to allocate the learning budget among the assets in order to maximize the expected benefit of the auction. We describe an analytical solution to the problem when there are two assets and the uncertainty in cost-efficiency is normally distributed. When there are more the two assets in the auction pool, then the analytical solution does not apply. Instead, we propose a heuristic solution to the problem based on optimally ranking the assets in order of cost-efficiency (rather than knowing explicitly, the exact value that determines the ranks). We compare the results of the heuristic solution to a Monte Carlo simulation of the problem to demonstrate that it arrives at the same optimal allocation of learning resources. In applying our model to case-studies with different numbers of assets and with different prior knowledge of the assets cost-efficiency, we glean a number of rules-of-thumb that may be helpful to agencies conducting conservation auctions. When learning budgets are small then the most optimal strategy is to learn new information about the most marginal assets, that is, the assets about which the probability of being the most cost-efficient is the most uncertain. Then, as the budget increases it becomes more optimal to learn about assets which have uncertain cost-efficiency in the more general sense. Finally, as learning budgets become large enough as to not be limiting, resources can be allocated evenly across all uncertain assets. The model we propose and the analytical, heuristic solutions we apply to its case studies, imply that naive even allocation (or no allocation at all) to learning among assets in a conservation auction may lead to less than cost-efficient outcomes for the agencies that use them.
 
 # Introduction {-}
 Conservation auctions have become a widespread and established market mechanism aimed at achieving public environmental good by contracting with landholders and managers cost-efficiently. Conservation auctions include payment for ecosystem services (PES) schemes, environmental stewardship and conservation easement programs. Some recent examples include the US Water Quality Incentives Program, the Conestoga watershed reverse auctions of Pennsylvania, the English Countryside Stewardship Scheme, the German MEKA project and the Bush Returns and Bush Tender programs in Victoria, Australia.
@@ -84,58 +84,51 @@ Conservation auctions have become a widespread and established market mechanism 
 Uncertainty about the benefits resulting from a conservation auction investment is not often addressed. Ignoring uncertainty may be foregoing untapped benefit in the implementation of a conservation auction. If the uncertainty in a conservation auction was reduced then it could potentially be implemented with greater cost-efficiency than it would otherwise. Here we consider the uncertainty in a conservation auction and how resources should be allocated among the assets that are candidates for investment to seeking information. We use the concept of expected value of sample information (EVSI) and simple auction model to discover the best strategy to allocate resources to learning in a conservation auction.
 
 ## Reverse auctions {-}
-Conservation auctions typically take the form of a reverse auction. In a reverse auction, the agency conducting the auction, usually a branch of a government, is the buyer. The bidders are the landholders or land-managers who compete for the pool of funding available by offering to sell some prespecified environmental good desired by auction-conducting agency. The environmental good may take the form of land title or a contract to conduct a particular management action. In some cases the outcome of management is the good specified in the contract and the management action is left up to the managers. Unlike a standard auction where the buyers are competing and price is maximized, reverse auctions are aimed at reducing the price of the goods being purchased, as it is the sellers how are in competition with one another. In facilitating the competition for a single pool of funding the auction conducting agent seeks to maximize the environmental benefit it can get for the lowest cost and thus maximize the cost-effectiveness of the environmental scheme.
+Conservation auctions typically take the form of a reverse auction. In a reverse auction, the agency conducting the auction, usually a branch of a government, is the buyer. The bidders are the landholders or land-managers who compete for the pool of funding available by offering to sell some prespecified environmental good desired by auction-conducting agency. The environmental good may take the form of land title or a contract to conduct a particular management action. In some cases the outcome of management is the good specified in the contract and the management action is left up to the managers. Unlike a standard auction where the buyers are competing and price is maximized, reverse auctions are aimed at reducing the price of the goods being purchased, as it is the sellers how are in competition with one another. In facilitating the competition for a single pool of funding the auction conducting agent seeks to maximize the environmental benefit it can get for the lowest cost and thus maximize the cost-efficiency of the environmental scheme.
 
 ## Ranking auction bids by cost-benefit ratio {-}
-In a typical reverse auction, aimed at getting some public environmental good, the conducting agency will assess the bids by their cost-benefit ratio. The bids will be ranked from highest to lowest in terms of cost efficiency. The winning bids will be the most cost-efficient up to some cutoff. The cutoff may be the cumulative total cost of the most cost efficient bids measured against a fixed budget, or it could be a prespecified level of cost-efficiency. Time-limited reverse auctions will often use the budget exhaustion method whereas longer-term schemes with repeated rounds might use a cost-efficiency based cutoff. The
-rank-by-cost-efficient strategy is usually near optimal though in some circumstances it can produce non-optimal results and more sophisticated portfolio methods can be used to maximize the total benefit. However, frequently the more complex methods yield similar results to a simple ranking and budget exhaustion strategy.
+In a typical reverse auction, aimed at getting some public environmental good, the conducting agency will assess the bids by their cost-benefit ratio. The bids will be ranked from highest to lowest in terms of cost efficiency. The winning bids will be the most cost-efficient up to some cutoff. The cutoff may be the cumulative total cost of the most cost efficient bids measured against a fixed budget, or it could be a prespecified level of cost-efficiency. Time-limited reverse auctions will often use the budget exhaustion method whereas longer-term schemes with repeated rounds might use a cost-efficiency based cutoff. The rank-by-cost-efficiency strategy is usually near optimal though in some circumstances it can produce non-optimal results and more sophisticated portfolio methods can be used to maximize the total benefit. However, frequently the more complex methods yield similar results to a simple ranking and budget exhaustion strategy.
 
 ## Conservation auctions and uncertainty {-}
-There are multiple sources of uncertainty in a conservation auction that can affect the outcome in a number of ways. Moreover, there a multiple perspectives from which to view uncertainty within the framework of a conservation auction, and the different actors may be affected by different uncertainties about different aspects of the auction. Here we focus only one aspect of uncertainty, uncertainty about the cost-efficiency of bids and only from the perspective of the agency conducting the auction. Other important facets of uncertainty in reverse-auctions, are the knowledge bidders have of one another's circumstances and intentions and the circumstances of the seller. There is a vast game-theoretic literature dealing with these types of uncertainty in auctions, but we don't deal with them further here.
+There are multiple sources of uncertainty in a conservation auction that can affect the outcome in a number of ways. Moreover, there a multiple perspectives from which to view uncertainty within the framework of a conservation auction, and the different actors may be affected by different uncertainties about different aspects of the auction. Here we focus only one aspect of uncertainty, uncertainty about the cost-efficiency of bids and only from the perspective of the agency conducting the auction. Other important facets of uncertainty in reverse-auctions, are the knowledge bidders have of one anther's circumstances and intentions and the circumstances of the seller. There is a vast game-theoretic literature dealing with these types of uncertainty in auctions, but we don't deal with them further here.
 
-After the bids are submitted in an auction, that component of the auction cost will have no uncertainty. So in most conservation auctions the bulk of the uncertainty about cost-efficiency is due to uncertainty about benefits. Conservation benefit of the kind sought after in a reverse auction is inherently uncertain as it is often only realized at some point far in future, long after the auction scheme is implemented. Land regeneration, water or soil quality improvement, or other ecosystem services are some examples of the type of benefit that is payed for at one point in time, while the payoff is not expected until much later on. This time-lag in return on investment makes the cost-efficiency of auction bids uncertain. Uncertainty in the individual auction bids then leads to a neccessary uncertainty in their ranking. And therefore, the uncertainty in benefits flows through to the cost-efficiency and to the total benefit realised for the conservation auction scheme. 
+After the bids are submitted in an auction, that component of the auction cost will have no uncertainty. So in most conservation auctions the bulk of the uncertainty about cost-efficiency is due to uncertainty about benefits. Conservation benefit of the kind sought after in a reverse auction is inherently uncertain as it is often only realized at some point far in future, long after the auction scheme is implemented. Land regeneration, water or soil quality improvement, or other ecosystem services are some examples of the type of benefit that is payed for at one point in time, while the payoff is not expected until much later on. This time-lag in return on investment makes the cost-efficiency of auction bids uncertain. Uncertainty in the individual auction bids then leads to a necessary uncertainty in their ranking. And therefore, the uncertainty in benefits flows through to the cost-efficiency and to the total benefit realized for the conservation auction scheme. 
 
 ## The value of information {-}
-Given that the outcome of many conservation auctions maybe uncertain, it way be wise for an auction conducting agency to invest resources in learning about the benefits before they rank the assets and determine the winning bids. If they can increase the probability of correctly ranking the bids in order of cost-efficiency, they could avoid investing in unwarranted assets and increase the total benefits realised after the auction is completed. The performance gain one might expect after learning and a subsequent reduction in uncertainty is known as the expected value of information (EVI). Decision makers can use an EVI analysis to predetermine the worth of learning about the outcome a decision problem such as a conservation. A type of EVI is the expected value of sample information, EVSI, which is the value of reducing uncertainty by some degree, by collecting a sample of data, as opposed to eliminitating uncertainty completely, which is the expected value of perfect information (EVPI). 
+Given that the outcome of many conservation auctions maybe uncertain, it way be wise for an auction conducting agency to invest resources in learning about the benefits before they rank the assets and determine the winning bids. If they can increase the probability of correctly ranking the bids in order of cost-efficiency, they could avoid investing in unwarranted assets and increase the total benefits realized after the auction is completed. The performance gain one might expect after learning and a subsequent reduction in uncertainty is known as the expected value of information (EVI). Decision makers can use an EVI analysis to predetermine the worth of learning about the outcome a decision problem such as a conservation. A type of EVI is the expected value of sample information, EVSI, which is the value of reducing uncertainty by some degree, by collecting a sample of data, as opposed to eliminating uncertainty completely, which is the expected value of perfect information (EVPI). 
 
-Using the concept of EVSI a conservation auctioneer could work out if it would be worthwhile collecting data to learn about the benefits of a conservation auction and even how much data would be most to appropriate to collect. Here we extend the idea of expected value of sample information for a conservation auction and consider how to allocate the uncertainty reducing sample of information among the different assets for sale in the auction. The naive solution to problem is simply to allocate learning evenly among the assets and reducing the uncertainty about the benefits of each by the same degree. However, depending on the particular circumstances of the initial levels of uncertainty this may not be the most optimal allocation of learning resources. 
+Using the concept of EVSI a conservation auctioneer could work out if it would be worthwhile collecting data to learn about the benefits of a conservation auction and even how much data would be most to appropriate to collect. Here we extend the idea of expected value of sample information for a conservation auction and consider how to allocate the uncertainty reducing sample of information among the different assets for sale in the auction. The naive solution to problem is simply to allocate learning evenly among the assets and reducing the uncertainty about the benefits of each by the same degree. However, depending on the particular circumstances of the initial levels of uncertainty, this may not be the most optimal allocation of learning resources. 
 
 # Analysis {-}
 ## The Model {-}
-Here we describe a simple model of a conservation auction where the cost-efficiency of each asset in the auction pool is uncertain. In our model there are, $n>1$, assets. The $i^{th}$ ($i = 1...n$) asset's cost-efficiency is described by a normal distribution with mean, $\mu_i$ and standard deviation, $\sigma_i$. There are two seperate budgets, one for investing in assets in the reverse auction and a second budget that can be used to reduce the uncertainty about the asset's cost-efficiency. The first budget is large enough to invest in any one of the assets, while the second budget is variable and can be used to collect a sample of data about the cost-efficiency of each individaul asset. The total budget for data collection $M$, may be divided between each of the $n$ assets in the auction with a different proportion, $p_i$, allocated to each asset where $Mp_i$ is proportional to the sample-size of data collected about the cost-efficiency of the $i^{th}$ asset.
+Here we describe a simple model of a conservation auction where the cost-efficiency of each asset in the auction pool is uncertain. In our model there are, $n>1$, assets. The $i^{th}$ ($i = 1...n$) asset's, $A_i$, cost-efficiency, $c_i$, is described by a normal distribution with mean, $\mu_i$ and standard deviation, $\sigma_i$. There are two separate budgets, one for investing in assets in the reverse auction and a second budget that can be used to reduce the uncertainty about the asset's cost-efficiency. The first budget is large enough to invest in any one of the assets, while the second budget is variable and can be used to collect a sample of data about the cost-efficiency of each individual asset. The total budget for data collection $M$, may be divided between each of the $n$ assets in the auction with a different proportion, $p_i$, allocated to each asset where $Mp_i$ is proportional to the sample-size of data collected about the cost-efficiency of the $i^{th}$ asset. Here $M$ can be considered to be the total sample-size given a sampling variance of one. An increase in sample-size or reduction in sampling variance would both increase the effective budget size.
 
-## Expected value under uncertainty  {-}
-Under the initial level of uncertainty a risk-neutral auctioneer would simply rank the assets in order of their expected cost-efficiency and invest in the asset with the largest mean cost-efficiecy. This is the expected value under uncertainty or also known as the expected value with original information (EVWOI). More formally,
+## Expected value under uncertainty {-}
+Under the initial level of uncertainty a risk-neutral auctioneer would simply rank the assets in order of their expected cost-efficiency and invest in the asset with the largest mean cost-efficiency. This is the expected value under uncertainty or also known as the expected value with original information (EVWOI). More formally,
 
 $$
 \mathrm{EVWOI} = \max\mu_i
 $$
 
-## Expected value of sample information  {-}
-Now we turn to the allocation of sampling for uncertainty reduction among the assets in the auction pool and the calculation of the expected value of sample information. In the following section we outline three solutions to the problem of calculating EVSI for the model above given a sampling budget and an allocation of the budget among the assets in the auction pool. When $n = 2$ there is analytical solution the derivation of which can be found in @Moore2017.
+## Expected value of sample information {-}
+Now we turn to the allocation of sampling among the assets in the auction pool and the calculation of the EVSI. In the following sections we outline three solutions to the problem of calculating EVSI for the model above, given a sampling budget and an allocation of the budget among the assets in the auction pool. The first is an analytical solution which applies when $n = 2$. For $n = 3$ we have formulated a heuristic definition which. The heuristic definition of EVSI is based on valuing the rank order of cost-efficiency rather than actual benefit achieved. We then compare these solutions to a general solution using Monte Carlo simulation.
 
-### Analytical solution when $n = 2$ 
-When there are only two assets the EVSI (as shown by @Moore2017) is defined as,
+### Analytical solution for $n = 2$ {-}
+When $n = 2$ there is analytical solution. Its derivation can be found in @Moore2017 where it is defined as:
 
-$$
-\mathrm{EVSI} = \frac{1}{2}\left(\Theta\sqrt{\frac{2}{\pi}}^{-\frac{\mu_1 - \mu_2}{2\Theta^2}} + (\mu_1 - \mu_2)\,\mathrm{erf}\left(\frac{\mu_1 - \mu_2}{\Theta\sqrt{2}}\right)\right) 
-$$
+\begin{equation}
+\mathrm{EVSI} = \frac{1}{2}\left(\Theta\sqrt{\frac{2}{\pi}}^{-\frac{\mu_1 - \mu_2}{2\Theta^2}} + (\mu_1 - \mu_2)\,\mathrm{erf}\left(\frac{\mu_1 - \mu_2}{\Theta\sqrt{2}}\right)\right)
+(\#eq:evsi2anp1)
+\end{equation}
 
 where, 
 
-$$
-\Theta = \sigma^2_1\frac{Mp_1\sigma^2_1}{Mp_1\sigma^2_1 + 1} + \sigma^2_2\frac{Mp_2\sigma^2_2}{Mp_2\sigma^2_2 + 1}
-$$
+\begin{equation}
+\Theta = \sqrt{\sigma^2_1\frac{Mp_1\sigma^2_1}{Mp_1\sigma^2_1 + 1} + \sigma^2_2\frac{Mp_2\sigma^2_2}{Mp_2\sigma^2_2 + 1}}
+(\#eq:evsi2anp2)
+\end{equation}
 
-# Discussion {-}
-Possible extensions -
-Budget larger so can purchase more assets. 
-More sophisticated algorithm for selecting wining bids.
-Single budget for both learning and purchasing.
-Different types of learning - learning about individual bids, learning about benefits in general.
-
-# Conclusions {-}
-
+Note that to calculate the EVPI one can replace equation \@ref(eq:evsi2anp2) with $\Theta = \sqrt{\sigma^2_1 + \sigma^2_2}$. With the above definition we can find the values of $p_i$ that maximizes EVSI for a given budget. In figure \@ref(fig:evsi2anplot) we show the results of such an optimization for a case where the first assets cost-efficiency is $\mathrm{N(1, 1)}$ and the second is $\mathrm{N(0, 1/5)}$.
 
 ```{r evsi2an}
 erf <- function(x) 2 * pnorm(x * sqrt(2)) - 1
@@ -200,7 +193,7 @@ evsi2opt <-
   }
 ```
 
-(ref:evsi2anplot) _Analytical solution to optimal allocation of sampling of two assets. In this case two assets have prior distributions $\mathrm{N}(\mu = 1, \sigma = 1)$ and $\mathrm{N}(\mu = 0, \sigma = 1/5)$ respectively. The top panel indicates the optimal proportional allocation of sampling between the two assets (black line) as well as the naive allocation with even sampling between two assets (dashed line) . Here $p$ is the proportion allocated to the first asset and $N$ is the total number of samples (the budget). The middle panel shows the EVSI for the optimal and naive sampling strategies of the panel above. The dotted line is the EVPI (`r evpi2an(1, c(1, 1/5))`). is The bottom panel indicates the gain in EVSI of using the optimal strategy over the naive solution (the difference between the two curves in the middle panel)._
+(ref:evsi2anplot) _Analytical solution to optimal allocation of sampling between two assets. In this case, the two assets have prior distributions $\mathrm{N}(1,1)$ and $\mathrm{N}(0,1/5)$ respectively. The top panel indicates the optimal proportional allocation of sampling between the two assets (black line) as well as the naive allocation with even sampling between two assets (dashed line) . Here $p_1$ is the proportion allocated to the first asset and $M$ is the total number of samples (the budget). The middle panel shows the EVSI for the optimal and naive sampling strategies of the panel above. The dotted line is the EVPI (`r round(evpi2an(1, c(1, 1/5)), 3)`). The solid line indicates the EVSI for the optimal allocation while the dashed line is the naive allocation. The bottom panel indicates the gain in EVSI of using the optimal strategy over the naive solution (the difference between the two curves in the middle panel)._
 
 ```{r evsi2anplot, fig.cap = "(ref:evsi2anplot)"}
 local({
@@ -221,7 +214,7 @@ local({
        col = "grey90", border = NA)
   abline(h = .5, lty = 2)
   points(N, p, type = "l", xpd = NA)
-  mtext("p", 2, 4)
+  mtext(expression(p[1]), 2, 4)
   axis(2, las = 1)
   
   plot.new()
@@ -243,33 +236,95 @@ local({
   mtext("EVSI gain", 2, 4)
   axis(2, las = 1)
   axis(1)
-  mtext("N", 1, 3, outer = TRUE)
+  mtext("M", 1, 3, outer = TRUE, font = 3)
 })
 ```
 
-```{r evsi2sim, eval = FALSE}
-system("julia evsi2sim.jl &")
-```
+### Heuristic solution for $n = 3$ {-}
+As the analytical solution above does not hold for $n > 2$ we propose the following heuristic solution based on valuing the rank order of cost-efficiency of assets in the auction pool. To elaborate, in valuing the assets by rank we mean we assign utilities to choosing an asset that is ranked first, second or third in terms of cost-efficiency. In this sense utility is indifferent to how much better, for example, the first-ranked asset is than the second and only concerned that is 
+the better of the two assets. With this principle we assign utilities to each combination of asset choice, $A_i$, and rank order of $c_i$ such that:
 
-```{r evsi2simplot}
-local({
-  sim = read.csv("evsi2sim.csv")
-  sim = as.matrix(sim)
-  r = raster(sim)
-  y = seq(0.99, 0.01, length.out = nrow(sim))[apply(sim, 2, which.max)]
-  x = seq(0.01, 0.99, length.out = ncol(sim))
-  plot.new()
-  plot.window(xlim = 0:1, ylim = 0:1, xaxs = 'i')
-  plot(r, xaxt = "n", las = 1, useRaster = FALSE, legend = FALSE, add = TRUE, col = grey.colors(256))
-  contour(r, add = TRUE)
-  abline(h = 1/2, lty = 2)
-  points(x, predict(gam(y~s(x))), type = "l", pch = 19, col = "black", lwd = 2)
-  axis(1, seq(0, 1, length.out = 6), seq(0, 50, length.out = 6))
-  axis(2, 0:5/5, las = 1)
-  mtext("N", 1, 3)
-  mtext("p", 2, 3)
-})
-```
+\begin{equation}
+\begin{aligned}
+u(A_1, c_1 > c_2 > c_3)&=1\\
+u(A_1, c_1 > c_3 > c_2)&=1\\
+u(A_1, c_2 > c_1 > c_3)&=0.5\\
+u(A_1, c_3 > c_1 > c_2)&=0.5\\
+u(A_1, c_2 > c_3 > c_1)&=0\\
+u(A_1, c_3 > c_2 > c_1)&=0\\
+u(A_2, c_2 > c_1 > c_3)&=1\\
+\mathrm{etc...}&
+\end{aligned}
+(\#eq:utilities)
+\end{equation}
+
+Note that the choice of utilities is arbitrary and that a different set of values will change the solution. However, as long as the rank order of the utilities is the same, the general shape of the solution remains. It is this that makes the solution heuristic rather than exact.
+
+To determine EVSI given the above utilities we need only determine the probability each rank order and calculate the expected utility of choosing each action with either the original or updated knowledge of the asset cost-efficiencies. 
+
+We can express the probability of the assets being in a given rank order as the probabililty of two differences being less than zero. Such that, for example,
+
+\begin{equation}
+\Pr(c_1 > c_2 > c_3) = \Pr(c_2 - c_1 < 0,  c_3 - c_2 < 0)
+(\#eq:probrank)
+\end{equation}
+
+Following this we define two new variables, $z_1$ and $z_2$ where 
+
+\begin{equation}
+\begin{aligned}
+  z_1 &= c_2 - c_1,\\
+  z_2 &= c_3 - c_2
+\end{aligned}
+(\#eq:z12)
+\end{equation}
+
+When $c_i$ are uncorrelated then the covariance of $z_1$ and $z_2$ is $-\sigma^2_2$ and they will have a join distribution defined as:
+
+\begin{equation}
+\begin{bmatrix}z_1\\z_2\end{bmatrix}
+  \sim\mathrm{N}\left(
+  \begin{bmatrix}\mu_2-\mu_1\\\mu_3-\mu_2\end{bmatrix},
+  \begin{bmatrix}\sigma^2_1+\sigma^2_2&-\sigma^2_2\\-\sigma^2_2&\sigma^2_2+\sigma^2_3\end{bmatrix}\right)
+(\#eq:jointz)
+\end{equation}
+
+Given this joint distribution we can calculate $\Pr(c_1 > c_2 > c_3)$ by evaluating the multivariate cumulative distribution function, $\Phi(z_1, z_2)$ within the limits, $-\infty$ and $0$.
+
+With the above we can calculate the EVWOI, which is the maximum of the expected utilities of choosing the $i^{th}$ asset:
+
+\begin{equation}
+\mathrm{EVWOI} = \mathrm{max}(\mathrm{E}[u(A_i)])
+(\#eq:EVWOIheu)
+\end{equation}
+
+where each expected value is the sum of the utilities assigned for that choice of asset, multiplied by the rank order probabilities defined above. For example,
+
+\begin{equation}
+\begin{aligned}
+  \mathrm{E}[u(A_1)] = & 1 \times \Pr(c_1 > c_2 > c_3) + 1 \times \Pr(c_1 > c_3 > c_2)\,+ \\
+  &0.5 \times \Pr(c_2 > c_1 > c_3) + 0.5 \times \Pr(c_3 > c_1 > c_2)\,+ \\
+  &0 \times \Pr(c_2 > c_3 > c_1) + 0 \times \Pr(c_3 > c_2 > c_1)
+\end{aligned}
+(\#eq:EuA1)
+\end{equation}
+
+To calculate the EVSI we need not only know the EVWOI but also the expected value with sample information (EVWSI) for EVSI is the magitude of their difference: 
+
+\begin{equation}
+\mathrm{EVSI} = \mathrm{max}(\mathrm{E}[u(A^\prime_i)]) - \mathrm{max}(\mathrm{E}[u(A_i)])
+\end{equation}
+
+Where EVWOI relied on the expected utilities under the prior knowledge of cost efficiency ranking, the EVWSI relies on the expected utility under the posterior (after knowledge of cost efficieny ranking has been improved). To go from the expected utility under the prior, $\mathrm{E}[u(A_i)]$, to expected utility under the posterior, $\mathrm{E}[u(A^\prime_i)]$, we need to adjust the variances in equation \@ref(eq:jointz) from $\sigma^2_i$ to $\sigma^{\prime{}2_i}$, where
+
+\begin{equation}
+\sigma^{\prime{}2}_i = \frac{\sigma^2_i}{Mp_i\sigma^2_i + 1}
+(\#eq:updatesigma)
+\end{equation}
+
+which accounts for the new information given the sampling allocation $Mp_i$.
+
+Given the above, we can find the optimal values of $p_i$ for any given learning budget, $M$, and set of prior distributions describing uncertainty in cost-efficiency, $c_i$.
 
 ```{r calcjp}
 calc_jp = function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c) {
@@ -349,7 +404,7 @@ evsi3heu = function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c, sigma2, N, p, mp) {
 evsi3opt = 
   function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c, sigma2, N, f, mp = 0.5) {
     simplify2array(
-      mclapply(
+      parallel::mclapply(
         N, 
         function(N) {   
           x = 
@@ -371,7 +426,9 @@ evsi3opt =
   }
 ```
 
-```{r evsi2heuplot}
+(ref:evsi3heuplot) _Heuristic solution to the optimal allocation of sampling among three assets. In this case the assets have prior distributions of $N(2, 5/4)$, $N(1/2, 4/5)$ and $N(0, 3/4)$ describing the uncertainty in the cost-efficiency respectively. The curves show the optimal allocation $p_i$ of the sampling budget, $M$, to the first (solid line), second (dashed line) and third (dotted line) assets._
+
+```{r evsi3heuplot, fig.cap = "(ref:evsi3heuplot)"}
 local({
   x = seq(0.0001, 10, length.out = 50)
   y = evsi3opt(2, .5, 0, 1.25^-2, .8^-2, .75^-2, 1, x, evsi3heu, .5)
@@ -380,26 +437,70 @@ local({
   box()
   axis(1)
   axis(2, 0:5/5, las = 1)
-  mtext("N", 1, 3)
-  mtext("p", 2, 3)
+  mtext("M", 1, 3, font = 3)
+  mtext(expression(p[i]), 2, 3)
   points(x, y[2,], type = "l", lty = 1)
   points(x, y[3,], type = "l", lty = 2)
   points(x, y[4,], type = "l", lty = 3)
+  legend(8, 1, expression(p[1], p[2], p[3]), lty = 1:3, bty = "n")
 })
 ```
 
+### Monte Carlo Simulation {-}
+
 ```{r evsi2sim, eval = FALSE}
+system("julia evsi2sim.jl &")
+```
+
+(ref:evsi2simplot) _Simulation of EVSI for different allocations of sampling effort with increasing budget. Again, the two assets have prior distributions $\mathrm{N}(1,1)$ and $\mathrm{N}(0,1/5)$ respectively. Contours and shading indicates the estimated EVSI for the given allocation and budget. Dark black line is a smoothed curve fit to the optimal (maximum EVSI) value of $p_1$ for each budget. Note that this curve is more or less the same shape as the top panel of figure \@ref(fig:evsi2anplot)._
+
+```{r evsi2simplot, fig.cap = "(ref:evsi2simplot)"}
+local({
+  sim = read.csv("evsi2sim.csv")
+  sim = as.matrix(sim)
+  r = raster(sim)
+  y = seq(0.99, 0.01, length.out = nrow(sim))[apply(sim, 2, which.max)]
+  x = seq(0.01, 0.99, length.out = ncol(sim))
+  plot.new()
+  plot.window(xlim = 0:1, ylim = 0:1, xaxs = 'i')
+  plot(r, xaxt = "n", las = 1, useRaster = FALSE, legend = FALSE, add = TRUE, col = grey.colors(256))
+  contour(r, add = TRUE)
+  abline(h = 1/2, lty = 2)
+  points(x, predict(gam(y~s(x))), type = "l", pch = 19, col = "black", lwd = 2)
+  axis(1, seq(0, 1, length.out = 6), seq(0, 50, length.out = 6))
+  axis(2, 0:5/5, las = 1)
+  mtext("M", 1, 3, font = 3)
+  mtext(expression(p[1]), 2, 3)
+})
+```
+
+```{r evsi3sim, eval = FALSE}
 system("julia evsi3sim.jl &")
 ```
 
-```{r evsi3simplot}
+(ref:evsi3simplot) _Simulation of optimal allocation sampling among three assets. Prior distributions of the three assets are as in figure \@ref(fig:evsi3heuplot). Curves are smooth splines of the value of $p_i$ that maximises the simulated EVSI for a given budget level of $M$. Note that the three curves are broadly similar to the heuristic solution of figure \@ref(fig:evsi3heuplot)._
+
+```{r evsi3simplot, fig.cap = "(ref:evsi3simplot)"}
 local({
   y = read.csv("evsi3sim.csv", header = FALSE)
   y = as.matrix(y)[,-1:-3]
   x = seq(.0001, 10, length.out = 50)[-1:-3]
-  plot(x, y[1, ], ylim = 0:1, type = "n", las = 1, xlab = "N", ylab = "p")
+  plot(x, y[1, ], ylim = 0:1, type = "n", las = 1, xlab = "", xaxs = 'i',
+       ylab = expression(p[i]))
+  mtext("M", 1, 3, font = 3)
   lines(smooth.spline(x, y[1,]),lty = 1)
   lines(smooth.spline(x, y[2,]), lty = 2)
   lines(smooth.spline(x, 1 - (y[1, ] + y[2, ])), lty = 3)
+  legend(8, 1, expression(p[1], p[2], p[3]), lty = 1:3, bty = "n")
 })
 ```
+
+# Discussion {-}
+Rules of thumb
+Possible extensions -
+Budget larger so can purchase more assets. 
+More sophisticated algorithm for selecting wining bids.
+Single budget for both learning and purchasing.
+Different types of learning - learning about individual bids, learning about benefits in general.
+
+# Conclusions {-}
