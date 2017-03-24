@@ -2,7 +2,7 @@ pids = addprocs(10)
 
 @everywhere begin
     include("voiConsAuc.jl")
-    f(n, p1, p2) = evsi_sim([2, .5, 0], [1.25, .8, .75], [n * p1, n * p2, n * (1 - (p1 + p2))], nsims = 1000000)
+    f(n, p1, p2) = evsi_sim([1, .5, .5], [.8, 1.25, .75], [n * p1, n * p2, n * (1 - (p1 + p2))], nsims = 1000000)
     function g(n)
         s = 100
         x  = zeros(s, s)
@@ -18,7 +18,7 @@ pids = addprocs(10)
     end
 end
 
-y = @parallel hcat for n = linspace(0.0001, 10, 50)
+y = @parallel hcat for n = linspace(0.5, 10, 50)
   g(n)
 end
 rmprocs(pids)

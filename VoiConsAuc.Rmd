@@ -94,7 +94,7 @@ Conservation auctions can been used to meet the objectives of natural resource m
 # Introduction {-}
 Conservation auctions have become a widespread and established market mechanism aimed at achieving public environmental good by contracting with landholders and managers cost-efficiently. Conservation auctions include payment for ecosystem services (PES) schemes, environmental stewardship and conservation easement programs. Some recent examples include the US Water Quality Incentives Program, the Conestoga watershed reverse auctions of Pennsylvania, the English Countryside Stewardship Scheme, the German MEKA project and the Bush Returns and Bush Tender programs in Victoria, Australia.
 
-Uncertainty about the benefits resulting from a conservation auction investment is not often addressed. Ignoring uncertainty may be foregoing untapped benefit in the implementation of a conservation auction. If the uncertainty in a conservation auction was reduced then it could potentially be implemented with greater cost-efficiency than it would otherwise. Here we consider the uncertainty in a conservation auction and how resources should be allocated among the assets that are candidates for investment to seeking information. We use the concept of expected value of sample information (EVSI) and simple auction model to discover the best strategy to allocate resources to learning in a conservation auction.
+Uncertainty about the benefits resulting from a conservation auction investment is not often addressed. Ignoring uncertainty may be foregoing untapped benefit in the implementation of a conservation auction. If the uncertainty in a conservation auction was reduced then it could potentially be implemented with greater cost-efficiency than it would otherwise. Here we consider the uncertainty in a conservation auction and how resources should be allocated among the assets that are candidates for investment to seeking information. We use the concept of expected value of sample information (EVSI) and a simple auction model to discover the best strategy to allocate resources to learning in a conservation auction. With our model and the solutions we provide below, we derive three guiding principles that will aid an agency undertaking a conservation auction in allocating resources to learning about the cost-efficiency of the assets in their auction pool. 
 
 ## Reverse auctions {-}
 Conservation auctions typically take the form of a reverse auction. In a reverse auction, the agency conducting the auction, usually a branch of a government, is the buyer. The bidders are the landholders or land-managers who compete for the pool of funding available by offering to sell some prespecified environmental good desired by auction-conducting agency. The environmental good may take the form of land title or a contract to conduct a particular management action. In some cases the outcome of management is the good specified in the contract and the management action is left up to the managers. Unlike a standard auction where the buyers are competing and price is maximized, reverse auctions are aimed at reducing the price of the goods being purchased, as it is the sellers how are in competition with one another. In facilitating the competition for a single pool of funding the auction conducting agent seeks to maximize the environmental benefit it can get for the lowest cost and thus maximize the cost-efficiency of the environmental scheme.
@@ -440,12 +440,12 @@ evsi3opt =
   }
 ```
 
-(ref:evsi3heuplot) _Heuristic solution to the optimal allocation of sampling among three assets. In this case the assets have prior distributions of $N(2, 5/4)$, $N(1/2, 4/5)$ and $N(0, 3/4)$ describing the uncertainty in the cost-efficiency respectively. The curves show the optimal allocation $p_i$ of the sampling budget, $M$, to the first (solid line), second (dashed line) and third (dotted line) assets._
+(ref:evsi3heuplot) _Heuristic solution to the optimal allocation of sampling among three assets. In this case the assets have prior distributions of $N(2, 4/5)$, $N(1/2, 5/4)$ and $N(1/2, 3/4)$ describing the uncertainty in the cost-efficiency respectively. The curves show the optimal allocation $p_i$ of the sampling budget, $M$, to the first (solid line), second (dashed line) and third (dotted line) assets._
 
 ```{r evsi3heuplot, fig.cap = "(ref:evsi3heuplot)"}
 local({
-  x = seq(0.0001, 10, length.out = 50)
-  y = evsi3opt(2, .5, 0, 1.25^-2, .8^-2, .75^-2, 1, x, evsi3heu, .5)
+  x = seq(0.5, 10, length.out = 50)
+  y = evsi3opt(1, .5, .5, .8^-2, 1.25^-2, .75^-2, 1, x, evsi3heu, .5)
   plot.new()
   plot.window(xlim = c(0, 10), ylim = 0:1, xaxs = 'i')
   box()
@@ -522,10 +522,10 @@ system("julia evsi3sim.jl &")
 ```{r evsi3simplot, fig.cap = "(ref:evsi3simplot)"}
 local({
   y = read.csv("evsi3sim.csv", header = FALSE)
-  y = as.matrix(y)[,-1:-3]
-  x = seq(.0001, 10, length.out = 50)[-1:-3]
-  plot(x, y[1, ], ylim = 0:1, type = "n", las = 1, xlab = "", xaxs = 'i',
-       ylab = expression(p[i]))
+  y = as.matrix(y)
+  x = seq(.5, 10, length.out = 50)
+  plot(x, y[1, ], ylim = 0:1, xlim = c(0, 10), type = "n", las = 1, xlab = "", 
+       xaxs = 'i', ylab = expression(p[i]))
   mtext("M", 1, 3, font = 3)
   lines(smooth.spline(x, y[1,]),lty = 1)
   lines(smooth.spline(x, y[2,]), lty = 2)
@@ -534,18 +534,17 @@ local({
 })
 ```
 
-# Results & Discussion {-}
+## Principles {-}
 
-Rules of thumb
+From the solutions to our simple model we can glean a number of rules of thumb that agencies conducting conservation auctions should consider. By examining the anaytical solution to the two asset problem we can learn a number of things, some of which hold when we increase the complexity by adding a third asset and some of which dont. In examining both the two asset and three asset solutions we have elucidated the following principles guiding the allocation of learning resources in a conservation auction.
 
-Possible extensions
+### Principle 1: Unequal sampling allocation {-}
+In general an optimized unequal allocation of sampling among the assets in an auction will have greater EVSI and result in a more cost-effective auction than simply allocating sampling equally among the assets. However, the larger the budget for learning, the less having an optimal allocation matters. For example, in the case study of figure \@ref(fig:evsi2anplot) we see that the peak of expected gain from sampling optimally is for a small budget that is expected to return an EVSI about half the EVPI. As the budget increases and with it EVSI approaches EVPI asymtotically, the difference between an optimal allocation of learning and a naive, even allocation becomes negligible. When considering two assets this principle only applies when the uncertainty around each asset's cost-efficiency is unequal. Even if each as asset has a different expected cost-efficiency it is only optimal to unevenly allocate learning if the variance of their prior cost-efficiecies is unequal. However, when we consider a case with three assets, then it is only optimal to allocate evenly when all the prior means and all the prior variances are the same. That is to say, we should only allocate learning equally when we are completely in the dark about the rank order of asset cost efficiencies.
 
-Budget larger so can purchase more assets. 
+### Principle 2: Learn first at the margin {-}
+Knowing that it is probably suboptimal to allocate learning equally among assets is only useful if one knows in what way the should otherwise distribute sampling effort. The second principle is that given a relatively small to moderate budget and some state of uncertainty about the cost-efficieny of auction assets, it is wisest to prefer allocation to assets on the margin. By on the margin we mean assets that are borderline cases for potential investment. If the prior knowledge of an asset is it that is unlikely to be cost-efficient enough to warrant being a winning bid or if it the prior knowledge is that is highly likely to warrant investment then learning about these to classes of assets is less preferencial than the more marginal cases. In figure \@ref(fig:evsi3heuplot) this principle is illustrated by the fact that assets 1 and 2 demand greater allocation of sampling than asset 3 as asset 3 has the lowest prior mean cost-efficiency as well as the greatest certainty. Further, for small budgets investment in learing about asset 1 is preferred over asset 2 even though asset 2 has a greater uncertainty.
 
-More sophisticated algorithm for selecting wining bids.
-
-Single budget for both learning and purchasing.
-
-Different types of learning - learning about individual bids, learning about benefits in general.
+### Principle 3: Learn about the more uncertain assets {-}
+Again figure \@ref(fig:evsi3heuplot) highlights the final principle. Given the choice among to assets with similar cost-efficiency, it is more optimal to learn about the more uncertain. This third principle is however, superceded by the second, as it is only preferencial to learn about asset 2 (the most uncertain cost-efficiency) once the budget is large enough to also saticfy the demand to learn about asset 1. What is also clear from figure \@ref(fig:evsi3heuplot) is that principles 2 and three are interactive. For when the budget is large enough the allocation to learning about asset 2 compensates for learning about asset 1.
 
 # References {-}
