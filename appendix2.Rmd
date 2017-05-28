@@ -1,0 +1,586 @@
+\newpage
+\captionsetup{labelformat=empty}
+
+# Appendix C: VOI for conservation auctions heuristic solution _n_ = 3 {-}
+
+__Priors__
+
+Let $A_1$, $A_2$, $A_3$ be assets. Each has some value $c_1$, $c_2$, and $c_3$ which are uncertain with a joint prior probability distribution,
+
+\begin{equation}
+\begin{bmatrix}c_1 \\ c_2 \\ c_3\end{bmatrix}\sim\mathcal{N}\left(\begin{bmatrix}\mu_1 \\ \mu_2 \\ \mu_3\end{bmatrix}, \begin{bmatrix}\sigma^2_1 & 0 & 0 \\ 0 & \sigma^2_2 & 0\\ 0 & 0 & \sigma^2_3 \end{bmatrix}\right)
+(\#eq:jointprior)
+\end{equation}
+
+where $\mu_1$, $\mu_2$, and $\mu_3$ are means and $\sigma_1$, $\sigma_2$ and $\sigma_3$ are the prior standard deviations. 
+
+__Utilities__
+
+We assign utilities to each rank order of $c_1$, $c_2$, and $c_3$ in combination with each action of purchasing one of $A$, $B$ or $C$,
+
+\begin{equation}
+\begin{aligned}
+u(A_1, c_1 > c_2 > c_3)&=1\\
+u(A_1, c_1 > c_3 > c_2)&=1\\
+u(A_1, c_2 > c_1 > c_3)&=0.5\\
+u(A_1, c_3 > c_1 > c_2)&=0.5\\
+u(A_1, c_2 > c_3 > c_1)&=0\\
+u(A_1, c_3 > c_2 > c_1)&=0\\
+u(A_2, c_2 > c_1 > c_3)&=1\\
+\mathrm{etc...}&
+\end{aligned}
+(\#eq:utilitiesapen2)
+\end{equation}
+
+such that utility is maximised when we purchase the highest ranked asset, zero when we purchase the lowest ranked and somewhere inbetween when we purchase the middle ranked asset.
+
+__Ranking probabilties__
+
+We can express the probability of any assets being in a given rank order as the probabililty of two differences being less than zero. Such that, for example,
+
+\begin{equation}
+\Pr(c_1 > c_2 > c_3) = \Pr(c_2 - c_1 < 0,  c_3 - c_2 < 0)
+(\#eq:probrankapen)
+\end{equation}
+
+Given this we define two new variables, $z_1$ and $z_2$ where 
+
+\begin{equation}
+\begin{aligned}
+  z_1 &= c_2 - c_1,\\
+  z_2 &= c_3 - c_2
+\end{aligned}
+(\#eq:z12apen)
+\end{equation}
+
+Even if $c_1$, $c_2$, and $c_3$ are all uncorrelated $z_1$ and $z_2$ will not be, where
+
+\begin{equation}
+\mathrm{cov}(z_1, z_2)=\mathrm{cov}(c_1, c_2) - \mathrm{var}(c_2) - \mathrm{cov}(c_1, c_3) + \mathrm{cov}(c_2, c_3)
+(\#eq:covz)
+\end{equation}
+
+Which, when $c_1$, $c_2$, and $c_3$ are all uncorrelated simplifies to
+
+\begin{equation}
+\mathrm{cov}(z_1, z_2)=-\mathrm{var}(c_2)
+(\#eq:covz2)
+\end{equation}
+
+Therefore the joint distribution of $z_1$ and $z_2$ is,
+
+\begin{equation}
+\begin{bmatrix}z_1\\z_2\end{bmatrix}
+  \sim\mathrm{N}\left(
+  \begin{bmatrix}\mu_2-\mu_1\\\mu_3-\mu_2\end{bmatrix},
+  \begin{bmatrix}\sigma^2_1+\sigma^2_2&-\sigma^2_2\\-\sigma^2_2&\sigma^2_2+\sigma^2_3\end{bmatrix}\right)
+(\#eq:jointzapen)
+\end{equation}
+
+To obtain $\Pr(c_1 > c_2 > c_3)$ we evalute the multivariate cumulative distribution function of $z_1$ and $z_2$,
+
+\begin{equation}
+\Phi(z_1,z_2)
+(\#eq:phiz)
+\end{equation}
+
+within the limits, $-\infty$ and 0.
+
+__Expected value of perfect information__
+
+To calculate the prior expected utility of purchasing any asset, we weight the utilities for that action (eqn. 2) by the relevant probablities calculated from eqns. 3--9. For instance;
+
+\begin{equation}
+\begin{aligned}
+  \mathrm{E}[u(A_1)] = & 1 \times \Pr(c_1 > c_2 > c_3) + 1 \times \Pr(c_1 > c_3 > c_2)\,+ \\
+  &0.5 \times \Pr(c_2 > c_1 > c_3) + 0.5 \times \Pr(c_3 > c_1 > c_2)\,+ \\
+  &0 \times \Pr(c_2 > c_3 > c_1) + 0 \times \Pr(c_3 > c_2 > c_1)
+\end{aligned}
+(\#eq:EuA1apen)
+\end{equation}
+
+The expected value of perfect information then is,
+
+\begin{equation}
+\mathrm{EVPI}=1-\max(\mathrm{E}[u(A_1)],\mathrm{E}[u(A_2)],\mathrm{E}[u(A_3)])
+(\#eq:evpiapen2)
+\end{equation}
+
+__Updating__
+
+Now suppose we can update the priors for $c_1$, $c_2$, and $c_3$ by taking $M$ samples from sampling distrubutions with, for simplicity, some fixed variance of 1 and centered on $\mu_1$, $\mu_2$ and $\mu_3$ respectively. Further, we can define $p_1$ and $p_2$ as the proportion of the $M$ samples allocated to sampling for $A_1$ and $A_2$ respectively with $1 - p_1 - p_2$ being allocated to $A_3$. We can then use these samples to update the priors for $c_1$, $c_2$, and $c_3$ to obtain preposterior estimates, $c^\prime_1$, $c^\prime_2$, and $c^\prime_3$, where,
+
+\begin{equation}
+\begin{bmatrix}c^\prime_1 \\ c^\prime_2 \\ c^\prime_3\end{bmatrix}\sim\mathcal{N}\left(\begin{bmatrix}\mu_1 \\ \mu_2 \\ \mu_3\end{bmatrix}, \begin{bmatrix}\frac{\sigma^2_1}{Mp_1\sigma^2_1 + 1} & 0 & 0 \\ 0 & \frac{\sigma^2_2}{Mp_2\sigma^2_2 + 1} & 0\\ 0 & 0 & \frac{\sigma^2_3}{M(1 - p_1 - p_2)\sigma^2_3 + 1} \end{bmatrix}\right)
+(\#eq:jointpost)
+\end{equation}
+
+__Expected value of sample information__
+
+For any given new rank order, based on the updated preposterior distributions, we can again calculate a probablity by defining new variables (i.e., $z^\prime_1$ and $z^\prime_2$) and evalute their multivariate cumulative distribution as in eqns. 3--9. Therefore we can obtain the preposterior expected utilities for each purchase action by weighting the preposterior probablites by their respective utilities as in eqn. 10. Accordingly the expected vale of sample information is
+
+\begin{equation}
+\mathrm{EVSI}=\max(\mathrm{E}^\prime[u(A_1)],\mathrm{E}^\prime[u(A_2)],\mathrm{E}^\prime[u(A_3)])-\max(\mathrm{E}[u(A_1)],\mathrm{E}[u(A_2)],\mathrm{E}[u(A_3)])
+(\#eq:evsiapen2)
+\end{equation}
+
+__Optimisation__
+
+Using eqns 8-13 we can find the optimal values of $p_1$ and $p_2$ for any given $M$ that will maximise the EVSI. Below we examine a number of __Case studies for different sets of prior distrbutions for $c_1$, $c_2$ and $c_3$.
+
+```{r, echo=FALSE, message=FALSE}
+calc_jp <- function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c) {
+  require(mvtnorm)
+  pr_ord <- function(ord) {
+  
+  mu_ <- unname(unlist(mget(paste('mu', ord, sep='_'), inherits=TRUE)))
+  var_ <- 1 / unname(unlist(mget(paste('tau', ord, sep='_'), inherits=TRUE)))
+  
+  muz <- c(mu_[2] - mu_[1], mu_[3] - mu_[2])
+  varz <- c(var_[1] + var_[2], var_[2] + var_[3])
+    
+  pmvnorm(c(-Inf, -Inf), c(0, 0), 
+    mean=muz, 
+    sigma=rbind(c(varz[1], -var_[2]), c(-var_[2], varz[2])))
+  }
+  
+  return(
+    c(pr_ord(c('a', 'b', 'c')), 
+      pr_ord(c('a', 'c', 'b')), 
+      pr_ord(c('b', 'a', 'c')), 
+      pr_ord(c('b', 'c', 'a')), 
+      pr_ord(c('c', 'a', 'b')), 
+      pr_ord(c('c', 'b', 'a'))
+    )
+  )
+}
+
+upd_tau <- function(sigma2, n, tau) {
+  tau + (n / sigma2) 
+}
+
+EVPI <- function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c) {
+  
+  jps <- calc_jp(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c)
+  
+  E_pri_uA <- sum(jps * c(1, 1, .5, 0, .5, 0))
+  E_pri_uB <- sum(jps * c(.5, 0, 1, 1, 0, .5))
+  E_pri_uC <- sum(jps * c(0, .5, 0, .5, 1, 1))
+  
+  1 - pmax(E_pri_uA, E_pri_uB, E_pri_uC)
+
+}
+
+EVSI <- function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c, sigma2, N, p) {
+  sapply(N, 
+    function(N) {
+      jps <- calc_jp(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c)
+    
+      E_pri_uA <- sum(jps * c(1, 1, .5, 0, .5, 0))
+      E_pri_uB <- sum(jps * c(.5, 0, 1, 1, 0, .5))
+      E_pri_uC <- sum(jps * c(0, .5, 0, .5, 1, 1))
+      
+      tau_a <- upd_tau(sigma2, N * p[1], tau_a)
+      tau_b <- upd_tau(sigma2, N * p[2], tau_b)
+      tau_c <- upd_tau(sigma2, N * (1 - p[1] - p[2]), tau_c)
+      
+      jps <- calc_jp(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c)
+    
+      E_post_uA <- sum(jps * c(1, 1, .5, 0, .5, 0))
+      E_post_uB <- sum(jps * c(.5, 0, 1, 1, 0, .5))
+      E_post_uC <- sum(jps * c(0, .5, 0, .5, 1, 1))
+      
+      pmax(E_post_uA, E_post_uB, E_post_uC) - 
+        pmax(E_pri_uA, E_pri_uB, E_pri_uC)
+    }
+  )  
+}
+
+EVSI_opt <- function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c, sigma2, N) {
+   require(parallel)
+  simplify2array(mclapply(N, 
+     function(N) {   
+       sol <- constrOptim(c(1/3, 1/3),
+         function(p) {
+           EVSI(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c, sigma2, N, p)
+        }, NULL, rbind(c(1, 0), c(0, 1), c(-1, -1)), c(0, 0, -1),
+        control=list(fnscale=-1)        
+       )
+       return(c(sol$value, sol$par[1], sol$par[2], 1 - sol$par[1] - sol$par[2]))
+     }, mc.cores=detectCores()
+   ))
+} 
+
+plot_EVSI_rank <- function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c, sigma2, N, sql) {
+  p <- c(1/3, 1/3)
+  EVPI_ <<- EVPI(mu_a=mu_a, mu_b=mu_b, mu_c=mu_c, tau_a=tau_a, tau_b=tau_b, tau_c=tau_c)
+  EVSI_ <<- EVSI(mu_a=mu_a, mu_b=mu_b, mu_c=mu_c, tau_a=tau_a, tau_b=tau_b, tau_c=tau_c,
+    sigma2=sigma2, N=seq(3, N, len=sql), p=p)
+  EVSI_opt_ <<- t(EVSI_opt(mu_a=mu_a, mu_b=mu_b, mu_c=mu_c, tau_a=tau_a, tau_b=tau_b, 
+    tau_c=tau_c, sigma2=sigma2, N=seq(3, N, len=sql)))
+  
+  par(mfcol=c(2, 2), mar=c(1, 1, 0, 0), oma=c(4, 3.5, 1, 5))
+  
+  plot.new()  
+  plot.window(xlim=c(0, N), ylim=c(0, 1.05))
+  box()
+  axis(2, las=1)
+  mtext('p', side=2, line=3, las=1, font=3)
+  abline(h=1/3, lwd=2, col='grey', lty=2)
+  points(seq(3, N, len=sql), EVSI_opt_[, 2], type='l', lwd=2, lty=2)
+  points(seq(3, N, len=sql), EVSI_opt_[, 3], type='l', lwd=2, col='red', lty=3)
+  points(seq(3, N, len=sql), EVSI_opt_[, 4], type='l', lwd=2, col='blue', lty=4)
+  mtext('a ', side=3, line=-1.3, adj=1)
+  
+  plot.new()  
+  plot.window(xlim=c(0, N), ylim=c(0, .57))
+  box()
+  axis(1)
+  axis(2, las=1)
+  mtext('N', side=1, line=2.5, font=3)
+  mtext('--- p=optimum', adj=0, side=1, line=3.5, col='red')
+  mtext(sprintf('--- p=%s', round(p, digits=2)), adj=1, side=1, line=3.5, col='black')
+  mtext('EVSI', side=2, line=3)
+  abline(h=EVPI_, lwd=2)
+  points(seq(3, N, len=sql), EVSI_, type='l', lwd=2, lty=3)
+  points(seq(3, N, len=sql), EVSI_opt_[, 1], type='l', lty=2, col='red')
+  text(0, EVPI_, sprintf('                         EVPI = %s', round(EVPI_, 3)), pos=3)
+  mtext('c ', side=3, line=-1.3, adj=1)
+   
+  plot.new()  
+  plot.window(xlim=c(0, 6), ylim=c(
+    min(mu_a - 2.5 * (tau_a^-.5), mu_b - 2.5 * (tau_b^-.5), mu_c - 2.5 * (tau_c^-.5)), 
+    max(mu_a + 2.5 * (tau_a^-.5), mu_b + 2.5 * (tau_b^-.5), mu_c + 2.5 * (tau_c^-.5))))
+  box()
+  axis(4, las=1)
+  segments(c(1.5, 3.5, 5.5), c(mu_a - 1.96 * (tau_a^-.5), mu_b - 1.96 * (tau_b^-.5), mu_c - 1.96 * (tau_c^-.5)), 
+    y1=c(mu_a + 1.96 * (tau_a^-.5), mu_b + 1.96 * (tau_b^-.5), mu_c + 1.96 * (tau_c^-.5)), col=c('black', 'red', 'blue'))
+  points(c(1.5, 3.5, 5.5), c(mu_a, mu_b, mu_c), pch=19, col=c('black', 'red', 'blue'))
+  text(1.5, mu_a, bquote({mu}[1]==.(round(mu_a, 3))), pos=2, font=3, col='black')
+  text(3.5, mu_b, bquote({mu}[2]==.(round(mu_b, 3))), pos=2, font=3, col='red')
+  text(5.5, mu_c, bquote({mu}[3]==.(round(mu_c, 3))), pos=2, font=3, col='blue')
+  mtext('b ', side=3, line=-1.3, adj=1)
+   
+  plot.new()  
+  plot.window(xlim=c(0, N), ylim=c(0, max(EVSI_opt_[, 1] - EVSI_, .001) * 1.2))
+  box()
+  axis(1)
+  axis(4, las=1)
+  mtext('N', side=1, line=2.5, font=3)
+  mtext(bquote('EVSI'^'p=optimum' - 'EVSI'^.(paste('p =', round(p, digits=2)))), side=4, line=4)
+  optN <<- seq(3, N, len=sql)[which.max(EVSI_opt_[, 1] - EVSI_)]
+  if (var(EVSI_opt_[, 1]  - EVSI_) == 0) optN <<- 0
+  abline(v=optN, col='red')
+  text(optN,
+    max(EVSI_opt_[, 1] - EVSI_, .001) * 1.18, 
+    round(optN), col='red', pos=4)
+  abline(h=max(EVSI_opt_[, 1] - EVSI_), col='blue', lty=4)
+  text(0, max(EVSI_opt_[, 1] - EVSI_),  
+    bquote('                                                   EVSI'^
+    'p=optimum' - 'EVSI'^.(paste('p =', round(p, digits=2))) == 
+      .(round(max(EVSI_opt_[, 1] - EVSI_), 3))),
+    pos=3, col='blue')
+  points(seq(3, N, len=sql), EVSI_opt_[, 1] - EVSI_, type='l', lwd=3) 
+  mtext('d ', side=3, line=-1.3, adj=1)
+  
+}
+```
+
+__Case study 1: homogenous prior $\sigma$'s and homogenous prior means__
+
+```{r x000_1_1_1, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=0, mu_b=0, mu_c=0, tau_a=1^-2, tau_b=1^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 2a: homogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 = \mu_2 > \mu_3$
+
+```{r x110_1_1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=.2, mu_c=0, tau_a=1^-2, tau_b=1^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 2b: homogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 = \mu_3$
+
+```{r x100_1_1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=0, tau_a=1^-2, tau_b=1^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 2c: homogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 > \mu_3$
+  
+```{r x10n1_1_1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=1^-2, tau_b=1^-2, tau_c=1^-2, sigma2=1, N=500, sql=25)
+```
+\clearpage
+
+__Case study 3a: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 = \mu_3$
+
+$\sigma_1 > \sigma_2 = \sigma_3$
+
+```{r x100___1_1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=0, tau_a=4^-2, tau_b=1^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3b: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 = \mu_3$
+
+$\sigma_1 < \sigma_2 = \sigma_3$
+
+```{r x1001_1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=0, tau_a=1^-2, tau_b=4^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3c: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 = \mu_2 > \mu_3$
+
+$\sigma_1 = \sigma_2 < \sigma_3$
+  
+```{r x110__1__1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=.2, mu_c=0, tau_a=4^-2, tau_b=4^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3d: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 = \mu_3$
+
+$\sigma_1 = \sigma_2 < \sigma_3$
+
+```{r x100__1__1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=0, tau_a=4^-2, tau_b=4^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3e: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 = \mu_3$
+
+$\sigma_1 = \sigma_2 > \sigma_3$
+
+```{r x100_1_1__1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=0, tau_a=1^-2, tau_b=1^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3f: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 = \mu_2 > \mu_3$
+
+$\sigma_1 = \sigma_3 < \sigma_2$
+
+```{r x110__1_1__1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=.2, mu_c=0, tau_a=4^-2, tau_b=1^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3g: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 = \mu_2 > \mu_3$
+
+$\sigma_1 = \sigma_3 > \sigma_2$
+
+```{r x110_1__1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=.2, mu_c=0, tau_a=1^-2, tau_b=4^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3h: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 = \mu_3$
+$\sigma_1 < \sigma_2 < \sigma_3$
+
+```{r x100_1__1___1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=0, tau_a=1^-2, tau_b=2^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage  
+
+__Case study 3i: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 = \mu_3$
+
+$\sigma_2 < \sigma_1 < \sigma_3$
+
+```{r x100__1_1___1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=0, tau_a=2^-2, tau_b=1^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3j: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 = \mu_3$
+
+$\sigma_1 > \sigma_2 > \sigma_3$
+
+```{r x100___1__1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=0, tau_a=4^-2, tau_b=2^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3k: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 = \mu_2 > \mu_3$
+
+$\sigma_1 < \sigma_2 < \sigma_3$
+
+```{r x110_1__1___1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=.2, mu_c=0, tau_a=1^-2, tau_b=2^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3l: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 = \mu_2 > \mu_3$
+
+$\sigma_1 < \sigma_3 < \sigma_2$
+
+```{r x110_1___1__1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=.2, mu_c=0, tau_a=1^-2, tau_b=4^-2, tau_c=2^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage  
+
+__Case study 3m: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 = \mu_2 > \mu_3$
+
+$\sigma_1 > \sigma_2 > \sigma_3$
+
+```{r x110___1__1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=.2, mu_c=0, tau_a=4^-2, tau_b=2^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3n: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 > \mu_3$
+
+$\sigma_1 < \sigma_2 = \sigma_3$
+
+```{r x10n1_1__1__1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=1^-2, tau_b=4^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3o: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 > \mu_3$
+
+$\sigma_1 = \sigma_2 < \sigma_3$
+
+```{r x10n1__1__1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=4^-2, tau_b=4^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3p: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 > \mu_3$
+
+$\sigma_1 = \sigma_3 > \sigma_2$
+
+```{r x10n1__1_1__1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=4^-2, tau_b=1^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage  
+
+__Case study 3q: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 > \mu_3$
+
+$\sigma_1 = \sigma_2 < \sigma_3$
+
+```{r x10n1_1_1__1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=1^-2, tau_b=1^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3r: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 > \mu_3$
+
+$\sigma_1 > \sigma_2 = \sigma_3$
+
+```{r x10n1__1_1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=4^-2, tau_b=1^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3s: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 > \mu_3$
+
+$\sigma_1 = \sigma_3 < \sigma_2$
+
+```{r x10n1_1__1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=1^-2, tau_b=4^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3t: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 > \mu_3$
+
+$\sigma_1 < \sigma_2 < \sigma_3$
+
+```{r x10n1_1__1___1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=1^-2, tau_b=2^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage  
+
+__Case study 3u: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 > \mu_3$
+
+$\sigma_2 < \sigma_1 < \sigma_3$
+
+```{r x10n1__1_1___1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=2^-2, tau_b=1^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3v: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 > \mu_3$
+
+$\sigma_1 < \sigma_3 < \sigma_2$
+
+```{r x10n1_1___1__1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=1^-2, tau_b=4^-2, tau_c=2^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3x: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 > \mu_3$
+
+$\sigma_1 > \sigma_3 > \sigma_2$
+
+```{r x10n1__1___1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=2^-2, tau_b=4^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+__Case study 3y: heterogenous prior $\sigma$'s and heterogenous prior means__
+
+$\mu_1 > \mu_2 > \mu_3$
+
+$\sigma_1 > \sigma_2 > \sigma_3$
+
+```{r x10n1___1__1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
+plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=4^-2, tau_b=2^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
+```
+\clearpage
+
+\captionsetup{labelformat=default}
