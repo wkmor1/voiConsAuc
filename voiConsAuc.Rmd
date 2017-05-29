@@ -83,7 +83,7 @@ Now we turn to the allocation of sampling among the assets in the auction pool a
 When $n = 2$ an analytical solution exists. Its derivation can be found in @Moore2017 where EVSI is defined as:
 
 \begin{equation}
-\mathrm{EVSI} = \frac{1}{2}\left(\Theta\sqrt{\frac{2}{\pi}}^{-\frac{\mu_1 - \mu_2}{2\Theta^2}} + (\mu_1 - \mu_2)\,\mathrm{erf}\left(\frac{\mu_1 - \mu_2}{\Theta\sqrt{2}}\right)\right)
+\mathrm{EVSI} = \frac{1}{2}\left(\Theta\sqrt{\frac{2}{\pi}}e^{-\frac{\mu_1 - \mu_2}{2\Theta^2}} + (\mu_1 - \mu_2)\,\mathrm{erf}\left(\frac{\mu_1 - \mu_2}{\Theta\sqrt{2}}\right) - |\mu_1 - \mu_2|\right)
 (\#eq:evsi2anp1)
 \end{equation}
 
