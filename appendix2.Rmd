@@ -289,7 +289,7 @@ plot_EVSI_rank <- function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c, sigma2, N, sql
 __Summary__
 
 * Optimal allocation sensitive to ratios of $\mu$'s.
-* Optimal allocation sensitive to ratio of $\sigma$'s$
+* Optimal allocation sensitive to ratio of $\sigma$'s.
 * Not always preferential to sample asset with greater uncertainty.
 * Solution is symmetrical.
 
