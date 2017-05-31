@@ -127,6 +127,16 @@ __Optimal sampling allocation__
 
 With equations 10-12, for any given set of $\mu_1$, $\sigma_1$, $\mu_2$, and $M$ we can find the optimal allocation to sample for asset $A_1$, $p$ to maximise the value of sample information.
 
+__Summary__
+
+* Optimal allocation insensitive to ratio of $\mu_a$ to $\mu_b$.
+* Optimal allocation sensitive to ratio of $\sigma_1$ to $\sigma_2$.
+* Always preferential to sample asset with greater uncertainty.
+* Solution is symmetrical.
+* The $M$ at which you start to allocate sampling to both assets is proportional to the ratio of $\sigma_1$ to $\sigma_2$.
+* The $M$ at which you start to allocate sampling to both assets is insensitive to whether  $\sigma_1 < \sigma_2$ or $\sigma_1 > \sigma_2$.
+* Optimal allocation always has greater EVSI when $\sigma_1 \neq \sigma_2$.
+
 ```{r, echo=FALSE}
 EVPI <- function(mu_a, tau_a, tau_b) {
   PI <- pnorm(mu_a / (sqrt(2) * ((tau_a^-.5) + (tau_b^-.5))))
@@ -295,16 +305,5 @@ plot_EVSI_rank(mu_a=.2, tau_a=.2^-2, tau_b=2^-2, N=200, sigma2=1, p=.5)
 \clearpage
 
 The allocation is the same but now reflected so that we still allocate to the asset with more uncertainty (a). This applies no matter what the other parameter values are (i.e., the problem is symetrical).
-
-__Summary__
-
-* Optimal allocation insensitive to ratio of $\mu_a$ to $\mu_b$.
-* Optimal allocation sensitive to ratio of $\tau_a$ to $\tau_b$.
-* Always preferential to sample asset with greater uncertainty.
-* Solution is symetrical.
-* The $N$ at which you start to allocate sampling to both assets is proportional to the ratio of $\tau_a$ to $\tau_b$.
-* The $N$ at which you start to allocate sampling to both assets is proportional to the variance of the sampling distribution.
-* The $N$ at which you start to allocate sampling to both assets is insensitive to whether  $\tau_a < \tau_b$ or $\tau_a > \tau_b$.
-* Optimal allocation always has greater EVSI when $\tau_a \neq \tau_b$.
 
 \captionsetup{labelformat=default}

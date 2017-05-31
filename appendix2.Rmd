@@ -286,6 +286,13 @@ plot_EVSI_rank <- function(mu_a, mu_b, mu_c, tau_a, tau_b, tau_c, sigma2, N, sql
 }
 ```
 
+__Summary__
+
+* Optimal allocation sensitive to ratios of $\mu$'s.
+* Optimal allocation sensitive to ratio of $\sigma$'s$
+* Not always preferential to sample asset with greater uncertainty.
+* Solution is symmetrical.
+
 __Case study 1: homogenous prior $\sigma$'s and homogenous prior means__
 
 ```{r x000_1_1_1, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
@@ -357,7 +364,7 @@ __Case study 3d: heterogenous prior $\sigma$'s and heterogenous prior means__
 
 $\mu_1 > \mu_2 = \mu_3$
 
-$\sigma_1 = \sigma_2 < \sigma_3$
+$\sigma_1 = \sigma_2 > \sigma_3$
 
 ```{r x100__1__1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
 plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=0, tau_a=4^-2, tau_b=4^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
@@ -368,7 +375,7 @@ __Case study 3e: heterogenous prior $\sigma$'s and heterogenous prior means__
 
 $\mu_1 > \mu_2 = \mu_3$
 
-$\sigma_1 = \sigma_2 > \sigma_3$
+$\sigma_1 = \sigma_2 < \sigma_3$
 
 ```{r x100_1_1__1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
 plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=0, tau_a=1^-2, tau_b=1^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
@@ -379,7 +386,7 @@ __Case study 3f: heterogenous prior $\sigma$'s and heterogenous prior means__
 
 $\mu_1 = \mu_2 > \mu_3$
 
-$\sigma_1 = \sigma_3 < \sigma_2$
+$\sigma_1 = \sigma_3 > \sigma_2$
 
 ```{r x110__1_1__1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
 plot_EVSI_rank(mu_a=.2, mu_b=.2, mu_c=0, tau_a=4^-2, tau_b=1^-2, tau_c=4^-2, sigma2=1, N=5000, sql=25)
@@ -390,7 +397,7 @@ __Case study 3g: heterogenous prior $\sigma$'s and heterogenous prior means__
 
 $\mu_1 = \mu_2 > \mu_3$
 
-$\sigma_1 = \sigma_3 > \sigma_2$
+$\sigma_1 = \sigma_3 < \sigma_2$
 
 ```{r x110_1__1_1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
 plot_EVSI_rank(mu_a=.2, mu_b=.2, mu_c=0, tau_a=1^-2, tau_b=4^-2, tau_c=1^-2, sigma2=1, N=5000, sql=25)
@@ -400,6 +407,7 @@ plot_EVSI_rank(mu_a=.2, mu_b=.2, mu_c=0, tau_a=1^-2, tau_b=4^-2, tau_c=1^-2, sig
 __Case study 3h: heterogenous prior $\sigma$'s and heterogenous prior means__
 
 $\mu_1 > \mu_2 = \mu_3$
+
 $\sigma_1 < \sigma_2 < \sigma_3$
 
 ```{r x100_1__1___1c, echo=FALSE, cache=TRUE, message=FALSE, fig.height = 4, fig.cap = ""}
@@ -561,7 +569,7 @@ plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=1^-2, tau_b=4^-2, tau_c=2^-2, si
 ```
 \clearpage
 
-__Case study 3x: heterogenous prior $\sigma$'s and heterogenous prior means__
+__Case study 3w: heterogenous prior $\sigma$'s and heterogenous prior means__
 
 $\mu_1 > \mu_2 > \mu_3$
 
@@ -572,7 +580,7 @@ plot_EVSI_rank(mu_a=.2, mu_b=0, mu_c=-.2, tau_a=2^-2, tau_b=4^-2, tau_c=1^-2, si
 ```
 \clearpage
 
-__Case study 3y: heterogenous prior $\sigma$'s and heterogenous prior means__
+__Case study 3x: heterogenous prior $\sigma$'s and heterogenous prior means__
 
 $\mu_1 > \mu_2 > \mu_3$
 
