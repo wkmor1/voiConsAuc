@@ -89,6 +89,8 @@ When $n = 2$ an analytical solution exists. Its derivation can be found in @Moor
 (\#eq:evsi2anp1)
 \end{equation}
 
+\clearpage
+
 where, 
 
 \begin{equation}
@@ -242,6 +244,8 @@ local({
          xpd = NA, bty ="n", border = NA, title = expression(p[1]))
 })
 ```
+
+\clearpage
 
 #### Heuristic solution for $n = 3$ {-}
 As the analytical solution above does not hold for $n > 2$ we propose the following heuristic solution (when applied to $n = 2$ the heuristic solution allocates learning in exactly the same manner as the analytical solution, see Appendix C) based on valuing the rank order of cost-efficiency of assets in the auction pool. To elaborate, in valuing the assets by rank, we mean we assign utilities to choosing a single asset that is ranked first, second or third in terms of cost-efficiency. In this sense, utility is indifferent to how much better, for example, the first-ranked asset is than the second and only concerned that it is the better of the two assets. With this principle we assign utilities, $u$, to each combination of asset choice, $A_i$, and true rank order of $c_i$ such that:
