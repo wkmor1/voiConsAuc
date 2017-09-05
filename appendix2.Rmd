@@ -1,7 +1,7 @@
 \newpage
 \captionsetup{labelformat=empty}
 
-# Appendix C: VOI for conservation auctions heuristic solution _n_ = 3 {-}
+# Appendix D: VOI for conservation auctions heuristic solution _n_ = 3 {-}
 
 __Priors__
 
